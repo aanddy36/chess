@@ -1,4 +1,4 @@
-import { SquareColor, cols } from "../models";
+import { SquareColor } from "../models";
 import { Piece } from "./Piece";
 
 export class Square {

@@ -3,6 +3,10 @@ import { Piece } from "../classes/Piece";
 import { Square } from "../classes/Square";
 import { PiecesType, SquareColor, Team, cols, rows } from "../models";
 
+interface Refs {
+  [key: string]: HTMLDivElement | null;
+}
+
 const initalPieces = [
   new Piece({ x: 0, y: 0 }, PiecesType.ROOK, Team.BLACK),
   new Piece({ x: 0, y: 1 }, PiecesType.KNIGHT, Team.BLACK),
@@ -66,3 +70,11 @@ export function createBoard() {
   }
   return board;
 }
+
+export const createRefs = (board: Square[]) => {
+  let filteredBoard = board.filter((square) => square.piece);
+  return filteredBoard.reduce((acc, item) => {
+    acc[(item.piece as Piece).id] = null;
+    return acc;
+  }, {} as Refs);
+};

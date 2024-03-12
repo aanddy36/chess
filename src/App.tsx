@@ -4,14 +4,19 @@ import { checkXLimits, checkYLimits } from "./utils/grabPiece";
 import { SquareComp } from "./components/SquareComp";
 import { Square } from "./classes/Square";
 import { isValidMove } from "./utils/isValidMove";
+import { LastMove } from "./models";
 
 function App() {
   const [board, setBoard] = useState(createBoard());
   const [mouseActive, setMouseActive] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-  const [grabbedPiece, setGrabbedPiece] = useState<HTMLDivElement | null>(null);
+  const grabbedOne = useRef<HTMLDivElement | null>(null);
   const [firstSquare, setFirstSquare] = useState<Square | null>(null);
   const [lastSquare, setLastSquare] = useState<Square | null>(null);
+  const [lastMoveIDs, setLastMoveIDs] = useState<LastMove>({
+    first: null,
+    last: null,
+  });
   const boardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -23,20 +28,16 @@ function App() {
           const temp = Square.movePiece(firstSquare, lastSquare, prev);
           return temp;
         });
-      } else {
-        //console.log(grabbedPiece);
-        setGrabbedPiece((prev) => {
-          let asd = prev;
-          if (asd) {
-            asd.style.position = `static`;
-            setTimeout(() => {
-              (asd as HTMLDivElement).style.position = ""; // Resetting to default behavior
-            });
-          }
-          return asd;
+        setLastMoveIDs({
+          first: firstSquare.squareId,
+          last: lastSquare.squareId,
         });
+      } else {
+        if (grabbedOne.current) {
+          grabbedOne.current.style.position = `static`;
+        }
       }
-      setGrabbedPiece(null);
+      grabbedOne.current = null;
       setFirstSquare(null);
       setLastSquare(null);
       /* console.log(firstSquare);
@@ -45,18 +46,18 @@ function App() {
   }, [firstSquare, lastSquare]);
 
   useEffect(() => {
-    if (grabbedPiece) {
-      setGrabbedPiece((prev) => {
-        let asd = prev;
-        const boardDimensions =
-          boardRef.current?.getBoundingClientRect() as DOMRect;
-        if (asd) {
-          asd.style.position = `absolute`;
-          asd.style.top = `${checkYLimits(boardDimensions, cursorPos.y)}px`;
-          asd.style.left = `${checkXLimits(boardDimensions, cursorPos.x)}px`;
-        }
-        return asd;
-      });
+    if (grabbedOne.current) {
+      const boardDimensions =
+        boardRef.current?.getBoundingClientRect() as DOMRect;
+      grabbedOne.current.style.position = `absolute`;
+      grabbedOne.current.style.top = `${checkYLimits(
+        boardDimensions,
+        cursorPos.y
+      )}px`;
+      grabbedOne.current.style.left = `${checkXLimits(
+        boardDimensions,
+        cursorPos.x
+      )}px`;
     }
   }, [cursorPos]);
 
@@ -64,7 +65,7 @@ function App() {
     let temp = e.target as HTMLDivElement;
     const selectedSquare = board.find((square) => square.squareId === temp.id);
     if (temp.dataset.piece) {
-      setGrabbedPiece(temp);
+      grabbedOne.current = temp;
       setMouseActive(true);
       setFirstSquare(selectedSquare as Square);
     }
@@ -74,8 +75,14 @@ function App() {
     const elements = document.elementsFromPoint(e.clientX, e.clientY);
     const temp = elements.find((el) => el.classList.contains("square"));
     const selectedSquare = board.find((square) => square.squareId === temp?.id);
-    if (grabbedPiece) {
-      setLastSquare(selectedSquare as Square);
+
+    if (grabbedOne.current) {
+      if (selectedSquare) {
+        setLastSquare(selectedSquare as Square);
+      } else {
+        grabbedOne.current.style.position = `static`;
+        grabbedOne.current = null;
+      }
       setMouseActive(false);
       setCursorPos({ x: 0, y: 0 });
     }
@@ -105,6 +112,9 @@ function App() {
               square={square}
               handleMouseDown={handleMouseDown}
               handleMouseUp={handleMouseUp}
+              firstSquare={firstSquare}
+              lastSquare={lastSquare}
+              lastMove={lastMoveIDs}
             />
           );
         })}

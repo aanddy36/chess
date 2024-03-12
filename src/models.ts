@@ -18,3 +18,8 @@ export enum Team {
   BLACK = "b",
   WHITE = "w",
 }
+
+export interface LastMove {
+  first: string | null;
+  last: string | null;
+}

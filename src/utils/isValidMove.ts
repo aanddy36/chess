@@ -7,9 +7,17 @@ export const isValidMove = (
   firstSquare: Square,
   lastSquare: Square
 ) => {
+  const { piece: firstPiece } = firstSquare;
+  const { piece: lastPiece } = lastSquare;
   if (firstSquare.squareId === lastSquare.squareId) {
     return false;
   }
-  let middleSquares = crossedSquares(board, firstSquare, lastSquare);
-  return true
+  if (lastPiece && lastPiece.team === firstPiece?.team) {
+    return false;
+  }
+  if (firstPiece?.type !== PiecesType.KNIGHT) {
+    let middleSquares = crossedSquares(board, firstSquare, lastSquare);
+    return !middleSquares.some((item) => item?.piece);
+  }
+  return true;
 };

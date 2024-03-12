@@ -6,7 +6,10 @@ export default {
       colors:{
         "bg": "#312e2b",
         "greenSquare":"#739552",
-        "whiteSquare":"#ebecd0"
+        "whiteSquare":"#ebecd0",
+        "selectedSquare":"#FFFF33",
+        "whiteSelected":"#F5F682",
+        "greenSelected":"#B9CA43"
       }
     },
   },
