@@ -6,7 +6,6 @@ interface Props {
   handleMouseDown: (e: any) => void;
   handleMouseUp: (e: any) => void;
   firstSquare: Square | null;
-  lastSquare: Square | null;
   lastMove: LastMove;
 }
 
@@ -15,7 +14,6 @@ export const SquareComp = ({
   handleMouseDown,
   handleMouseUp,
   firstSquare,
-  lastSquare,
   lastMove,
 }: Props) => {
   const { squareId } = square;
@@ -24,13 +22,11 @@ export const SquareComp = ({
       className={`w-16 h-16 font-semibold square ${
         square.color === SquareColor.WHITE
           ? squareId === firstSquare?.squareId ||
-            squareId === lastSquare?.squareId ||
             squareId === lastMove.first ||
             squareId === lastMove.last
             ? "bg-whiteSelected"
             : "bg-whiteSquare"
           : squareId === firstSquare?.squareId ||
-            squareId === lastSquare?.squareId ||
             squareId === lastMove.first ||
             squareId === lastMove.last
           ? "bg-greenSelected"

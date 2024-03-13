@@ -5,6 +5,7 @@ import { SquareComp } from "./components/SquareComp";
 import { Square } from "./classes/Square";
 import { isValidMove } from "./utils/isValidMove";
 import { LastMove } from "./models";
+import { arraySounds } from "./utils/playSounds";
 
 function App() {
   const [board, setBoard] = useState(createBoard());
@@ -22,16 +23,24 @@ function App() {
   useEffect(() => {
     //console.log(board);
     if (lastSquare && firstSquare) {
-      const isValid = isValidMove(board, firstSquare, lastSquare);
+      const { isValid, moveType, changeProp, changeId, capturedInPassant } =
+        isValidMove(board, firstSquare, lastSquare);
+
       if (isValid) {
+        //console.log(changeProp);
         setBoard((prev) => {
-          const temp = Square.movePiece(firstSquare, lastSquare, prev);
+          const temp = Square.movePiece(firstSquare, lastSquare, prev, {
+            prop: changeProp,
+            id: changeId,
+            capturedInPassant,
+          });
           return temp;
         });
         setLastMoveIDs({
           first: firstSquare.squareId,
           last: lastSquare.squareId,
         });
+        moveType !== undefined && arraySounds[moveType]();
       } else {
         if (grabbedOne.current) {
           grabbedOne.current.style.position = `static`;
@@ -113,7 +122,6 @@ function App() {
               handleMouseDown={handleMouseDown}
               handleMouseUp={handleMouseUp}
               firstSquare={firstSquare}
-              lastSquare={lastSquare}
               lastMove={lastMoveIDs}
             />
           );

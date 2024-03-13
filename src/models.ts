@@ -23,3 +23,22 @@ export interface LastMove {
   first: string | null;
   last: string | null;
 }
+
+export enum ChangeProp {
+  PAWN_FIRST_M,
+  PAWN_EN_PASSANT,
+  ROOK_CASTLE,
+  KING_CASTLE,
+}
+export enum MoveType {
+  MOVE,
+  CAPTURE,
+  CASTLE,
+  PROMOTE,
+  CHECK,
+  CHECK_MATE,
+}
+export interface Coord {
+  x: number;
+  y: number;
+}

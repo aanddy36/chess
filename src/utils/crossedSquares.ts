@@ -1,8 +1,4 @@
 import { Square } from "../classes/Square";
-interface Coord {
-  x: number;
-  y: number;
-}
 
 export const crossedSquares = (
   board: Square[],
@@ -11,7 +7,10 @@ export const crossedSquares = (
 ) => {
   const startingPoint = firstSquare.gridPosition;
   const endingPoint = lastSquare.gridPosition;
-  let { vertical, horizontal } = findDistance(startingPoint, endingPoint);
+  let { vertical, horizontal } = Square.findDistance(
+    startingPoint,
+    endingPoint
+  );
   let filteredBoard = [];
   if (vertical !== 0 && horizontal !== 0) {
     let direcX = horizontal >= 0 ? 1 : -1;
@@ -62,11 +61,11 @@ export const crossedSquares = (
   return filteredBoard;
 };
 
-const findDistance = (start: Coord, end: Coord) => {
+/* export const findDistance = (start: Coord, end: Coord) => {
   let absX = end.x - start.x;
   let absY = end.y - start.y;
   return {
     vertical: absX,
     horizontal: absY,
   };
-};
+}; */

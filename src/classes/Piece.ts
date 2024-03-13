@@ -1,17 +1,14 @@
-import { PiecesType, Team } from "../models";
+import { Coord, PiecesType, Team } from "../models";
 import { nanoid } from "nanoid";
 
 export class Piece {
-  gridPosition: {
-    x: number;
-    y: number;
-  };
+  gridPosition: Coord;
   type: PiecesType;
   team: Team;
   image: string;
   id: string;
   constructor(
-    gridPosition: { x: number; y: number },
+    gridPosition: Coord,
     type: PiecesType,
     team: Team
   ) {
