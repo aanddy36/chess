@@ -31,7 +31,11 @@ export class Pawn extends Piece {
     const direc = vertical * upOrDown;
     const lastRef = firstPiece?.team === Team.BLACK ? 1 : 8;
 
-    if (diagonalOneSquareMove && direc > 0) {
+    if (
+      diagonalOneSquareMove &&
+      direc > 0 &&
+      lastPiece?.type !== PiecesType.KING
+    ) {
       if (lastPiece) {
         if (lastRef === lastSquare.chessPosition.y) {
           return {
@@ -66,8 +70,12 @@ export class Pawn extends Piece {
 
     if (verticalMoveOnly && !lastPiece && Math.abs(vertical) < 3 && direc > 0) {
       if (Math.abs(vertical) === 1) {
-        lastRef === lastSquare.chessPosition.y &&
-          console.log(lastSquare.chessPosition.y);
+        if (lastRef === lastSquare.chessPosition.y) {
+          return {
+            isValid: IsValidType.IN_PROCESS,
+            changeTeam: firstPiece?.team,
+          };
+        }
         return {
           isValid: IsValidType.YES,
           moveType: MoveType.MOVE,
