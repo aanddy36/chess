@@ -30,6 +30,7 @@ function App() {
   const boardRef = useRef<HTMLDivElement | null>(null);
   const promotionDec = useRef<HTMLDivElement | null>(null);
   const [piecePromoted, setPiecePromoted] = useState<PiecesType | null>(null);
+  const [hoveredSquare, setHoveredSquare] = useState<string | null>(null);
 
   useEffect(() => {
     const {
@@ -89,7 +90,6 @@ function App() {
               : (promotionDec.current.style.top = "0px");
           }
           break;
-          
       }
       if (isValid !== IsValidType.IN_PROCESS) {
         grabbedOne.current = null;
@@ -135,6 +135,7 @@ function App() {
   };
 
   const handleMouseUp = (e: MouseEvent) => {
+    setHoveredSquare(null);
     const elements = document.elementsFromPoint(e.clientX, e.clientY);
     const temp = elements.find((el) => el.classList.contains("square"));
     const selectedSquare = board.find((square) => square.squareId === temp?.id);
@@ -159,6 +160,15 @@ function App() {
     const watchCursor = (e: any) => {
       const { offsetTop, offsetLeft } = boardRef.current as HTMLDivElement;
       if (mouseActive) {
+        const elements = document.elementsFromPoint(e.clientX, e.clientY);
+        const temp = elements.find((el) => el.classList.contains("square"));
+        const selectedSquare = board.find(
+          (square) => square.squareId === temp?.id
+        );
+        if (hoveredSquare !== selectedSquare?.squareId && selectedSquare) {
+          setHoveredSquare(selectedSquare?.squareId);
+        }
+
         setCursorPos({ x: e.clientX - offsetLeft, y: e.clientY - offsetTop });
       }
     };
@@ -171,7 +181,7 @@ function App() {
   return (
     <main className=" bg-bg w-screen h-screen grid place-content-center">
       <div
-        className=" w-[512px] h-[512px] flex flex-wrap rounded-md relative"
+        className=" w-[512px] h-[512px] flex flex-wrap rounded-md relative overflow-hidden"
         ref={boardRef}
       >
         {board.map((square) => {
@@ -183,6 +193,7 @@ function App() {
               handleMouseUp={handleMouseUp}
               firstSquare={firstSquare}
               lastMove={lastMoveIDs}
+              hoveredSquare={hoveredSquare}
             />
           );
         })}

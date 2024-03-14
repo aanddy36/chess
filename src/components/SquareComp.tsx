@@ -7,6 +7,7 @@ interface Props {
   handleMouseUp: (e: any) => void;
   firstSquare: Square | null;
   lastMove: LastMove;
+  hoveredSquare: string | null;
 }
 
 export const SquareComp = ({
@@ -15,22 +16,31 @@ export const SquareComp = ({
   handleMouseUp,
   firstSquare,
   lastMove,
+  hoveredSquare,
 }: Props) => {
   const { squareId } = square;
   return (
     <div
-      className={`w-16 h-16 font-semibold square ${
+      className={`w-16 h-16 font-semibold square border-[3px] ${
         square.color === SquareColor.WHITE
           ? squareId === firstSquare?.squareId ||
             squareId === lastMove.first ||
             squareId === lastMove.last
-            ? "bg-whiteSelected"
-            : "bg-whiteSquare"
+            ? "bg-whiteSelected border-whiteSelected"
+            : "bg-whiteSquare border-whiteSquare"
           : squareId === firstSquare?.squareId ||
             squareId === lastMove.first ||
             squareId === lastMove.last
-          ? "bg-greenSelected"
-          : "bg-greenSquare"
+          ? "bg-greenSelected border-greenSelected"
+          : "bg-greenSquare border-greenSquare"
+      }  ${
+        hoveredSquare === squareId &&
+        square.color === SquareColor.WHITE &&
+        " border-white"
+      } ${
+        hoveredSquare === squareId &&
+        square.color === SquareColor.GREEN &&
+        " border-[#cecece]"
       }`}
       key={squareId}
       id={squareId}
@@ -39,7 +49,7 @@ export const SquareComp = ({
     >
       {square.piece && (
         <div
-          className="w-16 h-16 bg-cover cursor-grab active:cursor-grabbing z-[1]"
+          className="w-[61px] h-[61px] bg-cover cursor-grab active:cursor-grabbing z-[1]"
           id={squareId}
           data-piece
           style={{ backgroundImage: `url('${square.piece.image}')` }}
