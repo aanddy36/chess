@@ -39,42 +39,36 @@ export const SquareComp = ({
     >
       {square.piece && (
         <div
-          className="w-16 h-16 bg-cover cursor-grab active:cursor-grabbing"
+          className="w-16 h-16 bg-cover cursor-grab active:cursor-grabbing z-[1]"
           id={squareId}
           data-piece
           style={{ backgroundImage: `url('${square.piece.image}')` }}
         ></div>
       )}
-      {/* <div className="w-16 h-16 bg-selectedSquare/50"></div> */}
-      {/* {square.gridPosition.x === 7 && (
-                <div
-                  className={`absolute bottom-1 right-1 ${
-                    square.color === SquareColor.GREEN
-                      ? "text-whiteSquare"
-                      : "text-greenSquare"
-                  }`}
-                >
-                  {square.chessPosition.x}
-                </div>
-              )}
-              {square.gridPosition.y === 0 && (
-                <div
-                  className={`absolute top-1 left-1 ${
-                    square.color === SquareColor.GREEN
-                      ? "text-whiteSquare"
-                      : "text-greenSquare"
-                  }`}
-                >
-                  {square.chessPosition.y}
-                </div>
-              )} */}
+      {square.gridPosition.x === 7 && (
+        <span
+          className={` absolute bottom-[1px] ${
+            square.color === SquareColor.GREEN
+              ? "text-whiteSquare"
+              : "text-greenSquare"
+          }`}
+          style={{ left: `${square.gridPosition.y * 64 + 52}px` }}
+        >
+          {square.chessPosition.x}
+        </span>
+      )}
+      {square.gridPosition.y === 0 && (
+        <span
+          className={`absolute left-1 ${
+            square.color === SquareColor.GREEN
+              ? "text-whiteSquare"
+              : "text-greenSquare"
+          }`}
+          style={{ top: `${square.gridPosition.x * 64}px` }}
+        >
+          {square.chessPosition.y}
+        </span>
+      )}
     </div>
   );
 };
-
-<div id="outer" className="relative">
-  {/* some othe HTML */}
-  <div id="middle" className="relative">
-    <div id="inner" className="absolute">Hola</div>
-  </div>
-</div>
