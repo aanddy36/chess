@@ -71,3 +71,10 @@ export const SquareComp = ({
     </div>
   );
 };
+
+<div id="outer" className="relative">
+  {/* some othe HTML */}
+  <div id="middle" className="relative">
+    <div id="inner" className="absolute">Hola</div>
+  </div>
+</div>

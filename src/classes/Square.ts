@@ -1,4 +1,11 @@
-import { ChangeProp, Coord, SquareColor, cols } from "../models";
+import {
+  ChangeProp,
+  Coord,
+  PiecesType,
+  SquareColor,
+  Team,
+  cols,
+} from "../models";
 import { Pawn } from "./Pawn";
 import { Piece } from "./Piece";
 
@@ -8,8 +15,9 @@ interface ChessCoord {
 }
 interface ChangeObj {
   prop: ChangeProp[] | undefined;
-  id: string | undefined;
+  changeTeam: Team | undefined;
   capturedInPassant: string | undefined;
+  pieceToPromote: PiecesType | undefined;
 }
 
 export class Square {
@@ -36,6 +44,13 @@ export class Square {
         );
       }
       if (square.squareId === lastSquare.squareId) {
+        if (changeObj.pieceToPromote && firstSquare.piece) {
+          firstSquare.piece = new Piece(
+            square.gridPosition,
+            changeObj.pieceToPromote,
+            firstSquare.piece.team
+          );
+        }
         if (changeObj.prop?.includes(ChangeProp.PAWN_FIRST_M)) {
           (firstSquare.piece as Pawn).firstMoveDone = true;
         }

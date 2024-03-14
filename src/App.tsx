@@ -4,68 +4,118 @@ import { checkXLimits, checkYLimits } from "./utils/grabPiece";
 import { SquareComp } from "./components/SquareComp";
 import { Square } from "./classes/Square";
 import { isValidMove } from "./utils/isValidMove";
-import { LastMove } from "./models";
+import {
+  IsValidType,
+  LastMove,
+  MoveType,
+  PiecesType,
+  Team,
+  Validness,
+  initialState,
+} from "./models";
 import { arraySounds } from "./utils/playSounds";
+import { FaXmark } from "react-icons/fa6";
 
 function App() {
   const [board, setBoard] = useState(createBoard());
   const [mouseActive, setMouseActive] = useState(false);
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [cursorPos, setCursorPos] = useState(initialState.cursorPos);
   const grabbedOne = useRef<HTMLDivElement | null>(null);
   const [firstSquare, setFirstSquare] = useState<Square | null>(null);
   const [lastSquare, setLastSquare] = useState<Square | null>(null);
-  const [lastMoveIDs, setLastMoveIDs] = useState<LastMove>({
-    first: null,
-    last: null,
-  });
+  const [lastMoveIDs, setLastMoveIDs] = useState<LastMove>(
+    initialState.lastMoveIDs
+  );
+  const [isValidObj, setIsValidObj] = useState<Validness>(initialState.isValid);
   const boardRef = useRef<HTMLDivElement | null>(null);
+  const promotionDec = useRef<HTMLDivElement | null>(null);
+  const [piecePromoted, setPiecePromoted] = useState<PiecesType | null>(null);
 
   useEffect(() => {
-    //console.log(board);
-    if (lastSquare && firstSquare) {
-      const { isValid, moveType, changeProp, changeId, capturedInPassant } =
-        isValidMove(board, firstSquare, lastSquare);
-
-      if (isValid) {
-        //console.log(changeProp);
-        setBoard((prev) => {
-          const temp = Square.movePiece(firstSquare, lastSquare, prev, {
-            prop: changeProp,
-            id: changeId,
-            capturedInPassant,
+    const {
+      isValid,
+      changeProp,
+      capturedInPassant,
+      changeTeam,
+      moveType,
+      pieceToPromote,
+    } = isValidObj;
+    if (isValid !== IsValidType.NULL && firstSquare && lastSquare) {
+      switch (isValid) {
+        case IsValidType.YES:
+          const temp = [...board];
+          setBoard(
+            Square.movePiece(firstSquare, lastSquare, temp, {
+              prop: changeProp,
+              changeTeam,
+              capturedInPassant,
+              pieceToPromote,
+            })
+          );
+          setLastMoveIDs({
+            first: firstSquare.squareId,
+            last: lastSquare.squareId,
           });
-          return temp;
-        });
-        setLastMoveIDs({
-          first: firstSquare.squareId,
-          last: lastSquare.squareId,
-        });
-        moveType !== undefined && arraySounds[moveType]();
-      } else {
-        if (grabbedOne.current) {
-          grabbedOne.current.style.position = `static`;
-        }
+          moveType !== undefined && arraySounds[moveType]();
+          grabbedOne.current = null;
+          setFirstSquare(null);
+          setLastSquare(null);
+          break;
+        case IsValidType.NO:
+          if (grabbedOne.current) {
+            grabbedOne.current.style.position = `static`;
+          }
+          grabbedOne.current = null;
+          setFirstSquare(null);
+          setLastSquare(null);
+          break;
+        case IsValidType.IN_PROCESS:
+          if (piecePromoted) {
+            if (piecePromoted === PiecesType.CANCEL) {
+              setIsValidObj({ isValid: IsValidType.NO });
+            } else {
+              setIsValidObj({
+                isValid: IsValidType.YES,
+                moveType: MoveType.PROMOTE,
+                pieceToPromote: piecePromoted,
+              });
+            }
+            setPiecePromoted(null);
+          }
+          if (promotionDec.current) {
+            promotionDec.current.style.left = `${
+              lastSquare.gridPosition.y * 64
+            }px`;
+            promotionDec.current.style.visibility = "visible";
+            changeTeam === Team.BLACK
+              ? (promotionDec.current.style.bottom = "0px")
+              : (promotionDec.current.style.top = "0px");
+          }
       }
-      grabbedOne.current = null;
-      setFirstSquare(null);
-      setLastSquare(null);
-      /* console.log(firstSquare);
-      console.log(lastSquare); */
+    }
+  }, [isValidObj, piecePromoted]);
+
+  useEffect(() => {
+    if (lastSquare && firstSquare) {
+      setIsValidObj(isValidMove(board, firstSquare, lastSquare));
     }
   }, [firstSquare, lastSquare]);
 
   useEffect(() => {
-    if (grabbedOne.current) {
+    if (grabbedOne.current && cursorPos) {
       const boardDimensions =
         boardRef.current?.getBoundingClientRect() as DOMRect;
       grabbedOne.current.style.position = `absolute`;
+      const { offsetTop, offsetLeft } = boardRef.current as HTMLDivElement;
       grabbedOne.current.style.top = `${checkYLimits(
         boardDimensions,
-        cursorPos.y
+        cursorPos.y,
+        offsetTop
       )}px`;
       grabbedOne.current.style.left = `${checkXLimits(
         boardDimensions,
-        cursorPos.x
+        cursorPos.x,
+        offsetLeft
       )}px`;
     }
   }, [cursorPos]);
@@ -93,14 +143,19 @@ function App() {
         grabbedOne.current = null;
       }
       setMouseActive(false);
-      setCursorPos({ x: 0, y: 0 });
+      setCursorPos(initialState.cursorPos);
     }
+  };
+
+  const selectPromotion = (e: React.MouseEvent<HTMLInputElement>) => {
+    setPiecePromoted((e.target as HTMLInputElement).id as PiecesType);
   };
 
   useEffect(() => {
     const watchCursor = (e: any) => {
+      const { offsetTop, offsetLeft } = boardRef.current as HTMLDivElement;
       if (mouseActive) {
-        setCursorPos({ x: e.clientX, y: e.clientY });
+        setCursorPos({ x: e.clientX - offsetLeft, y: e.clientY - offsetTop });
       }
     };
     document.addEventListener("mousemove", watchCursor);
@@ -111,7 +166,7 @@ function App() {
   return (
     <main className=" bg-bg w-screen h-screen grid place-content-center">
       <div
-        className=" w-[512px] h-[512px] flex flex-wrap rounded-md overflow-hidden"
+        className=" w-[512px] h-[512px] flex flex-wrap rounded-md relative"
         ref={boardRef}
       >
         {board.map((square) => {
@@ -126,6 +181,97 @@ function App() {
             />
           );
         })}
+        {isValidObj.isValid === IsValidType.IN_PROCESS && (
+          <>
+            <div
+              className=" absolute inset-0 z-[1]"
+              onClick={() => setPiecePromoted(PiecesType.CANCEL)}
+            ></div>
+            <div
+              ref={promotionDec}
+              className={`border absolute z-[2] bg-white rounded-md flex w-16 overflow-hidden 
+            shadow-md shadow-black/50 invisible ${
+              isValidObj.changeTeam === Team.BLACK
+                ? "flex-col-reverse"
+                : "flex-col"
+            }`}
+            >
+              <label
+                className=" w-16 h-16 bg-cover cursor-pointer transition duration-200
+           hover:bg-gray-200 relative"
+                htmlFor={PiecesType.QUEEN}
+                style={{
+                  backgroundImage: `url('/src/assets/${isValidObj.changeTeam}q.png')`,
+                }}
+              >
+                <input
+                  name="promotion"
+                  className=" absolute inset-0 invisible"
+                  id={PiecesType.QUEEN}
+                  onClick={(e) => selectPromotion(e)}
+                />
+              </label>
+              <label
+                className="w-16 h-16 bg-cover cursor-pointer transition duration-200
+           hover:bg-gray-200 relative"
+                htmlFor={PiecesType.KNIGHT}
+                style={{
+                  backgroundImage: `url('/src/assets/${isValidObj.changeTeam}n.png')`,
+                }}
+              >
+                <input
+                  name="promotion"
+                  className=" absolute inset-0 invisible"
+                  id={PiecesType.KNIGHT}
+                  onClick={(e) => selectPromotion(e)}
+                />
+              </label>
+              <label
+                className="w-16 h-16 bg-cover cursor-pointer transition duration-200
+           hover:bg-gray-200 relative"
+                htmlFor={PiecesType.ROOK}
+                style={{
+                  backgroundImage: `url('/src/assets/${isValidObj.changeTeam}r.png')`,
+                }}
+              >
+                <input
+                  name="promotion"
+                  className=" absolute inset-0 invisible"
+                  id={PiecesType.ROOK}
+                  onClick={(e) => selectPromotion(e)}
+                />
+              </label>
+              <label
+                className="w-16 h-16 bg-cover cursor-pointer transition duration-200
+           hover:bg-gray-200 relative"
+                htmlFor={PiecesType.BISHOP}
+                style={{
+                  backgroundImage: `url('/src/assets/${isValidObj.changeTeam}b.png')`,
+                }}
+              >
+                <input
+                  name="promotion"
+                  className=" absolute inset-0 invisible"
+                  id={PiecesType.BISHOP}
+                  onClick={(e) => selectPromotion(e)}
+                />
+              </label>
+              <label
+                className=" bg-gray-200 p-2 grid place-content-center cursor-pointer opacity-55
+         transition duration-200 hover:opacity-100 relative"
+                htmlFor={PiecesType.CANCEL}
+              >
+                <input
+                  name="promotion"
+                  className=" absolute inset-0 invisible"
+                  id={PiecesType.CANCEL}
+                  onClick={(e) => selectPromotion(e)}
+                />
+                <FaXmark className="scale-[1.3]" />
+              </label>
+            </div>
+          </>
+        )}
       </div>
     </main>
   );

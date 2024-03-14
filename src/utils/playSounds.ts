@@ -6,4 +6,8 @@ export function capturePiece() {
   const capture = new Audio("/src/assets/capture.mp3");
   capture.play();
 }
-export const arraySounds = [moveDone, capturePiece];
+export function promotion() {
+  const capture = new Audio("/src/assets/promote.mp3");
+  capture.play();
+}
+export const arraySounds = [moveDone, capturePiece, promotion];

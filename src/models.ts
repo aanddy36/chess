@@ -12,6 +12,7 @@ export enum PiecesType {
   QUEEN = "q",
   KING = "k",
   BISHOP = "b",
+  CANCEL = "c"
 }
 
 export enum Team {
@@ -33,8 +34,8 @@ export enum ChangeProp {
 export enum MoveType {
   MOVE,
   CAPTURE,
-  CASTLE,
   PROMOTE,
+  CASTLE,
   CHECK,
   CHECK_MATE,
 }
@@ -42,3 +43,35 @@ export interface Coord {
   x: number;
   y: number;
 }
+
+export enum IsValidType {
+  YES = "YES",
+  NO = "NO",
+  IN_PROCESS = "IN_PROCESS",
+  NULL = "NULL",
+}
+
+export interface Validness {
+  isValid: IsValidType;
+  moveType?: MoveType;
+  changeProp?: ChangeProp[];
+  changeTeam?: Team;
+  pieceToPromote?: PiecesType;
+  capturedInPassant?: string;
+}
+
+export const initialState: {
+  cursorPos: Coord | null;
+  isValid: Validness;
+  lastMoveIDs: LastMove;
+} = {
+  cursorPos: null,
+  isValid: {
+    isValid: IsValidType.NULL,
+  },
+  lastMoveIDs: {
+    first: null,
+    last: null,
+  },
+};
+
