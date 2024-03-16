@@ -15,6 +15,7 @@ import {
 } from "./models";
 import { arraySounds } from "./utils/playSounds";
 import { PromotionMenu } from "./components/PromotionMenu";
+import { movePiece } from "./utils/movePiece";
 
 function App() {
   const [board, setBoard] = useState(createBoard());
@@ -47,7 +48,7 @@ function App() {
         case IsValidType.YES:
           const temp = [...board];
           setBoard(
-            Square.movePiece(firstSquare, lastSquare, temp, {
+            movePiece(firstSquare, lastSquare, temp, {
               prop: changeProp,
               changeTeam,
               capturedInPassant,

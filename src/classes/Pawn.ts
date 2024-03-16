@@ -6,6 +6,8 @@ import {
   Team,
   Validness,
 } from "../models";
+import { futureDangerZonePawn } from "../utils/futureDangerZones";
+
 import { Piece } from "./Piece";
 import { Square } from "./Square";
 
@@ -13,8 +15,8 @@ export class Pawn extends Piece {
   firstMoveDone = false;
   enPassant = true;
 
-  constructor(gridPosition: { x: number; y: number }, team: Team) {
-    super(gridPosition, PiecesType.PAWN, team);
+  constructor(team: Team) {
+    super(PiecesType.PAWN, team);
   }
 
   static validPawnMove(
@@ -31,29 +33,34 @@ export class Pawn extends Piece {
     const direc = vertical * upOrDown;
     const lastRef = firstPiece?.team === Team.BLACK ? 1 : 8;
 
-    if (
-      diagonalOneSquareMove &&
-      direc > 0 &&
-      lastPiece?.type !== PiecesType.KING
-    ) {
-      if (lastPiece) {
-        if (lastRef === lastSquare.chessPosition.y) {
-          return {
-            isValid: IsValidType.IN_PROCESS,
-            changeTeam: firstPiece?.team,
-          };
-        }
+    futureDangerZonePawn(upOrDown, lastSquare);
 
-        return { isValid: IsValidType.YES, moveType: MoveType.CAPTURE };
+    if (lastRef === lastSquare.chessPosition.y) {
+      return {
+        isValid: IsValidType.IN_PROCESS,
+        changeTeam: firstPiece?.team,
+      };
+    }
+
+    if (diagonalOneSquareMove && direc > 0) {
+      if (lastPiece) {
+        return {
+          isValid: IsValidType.YES,
+          moveType: MoveType.CAPTURE,
+          changeProp: !(firstPiece as Pawn).firstMoveDone
+            ? [ChangeProp.FIRST_M]
+            : [],
+        };
       }
       //EN PASSANT
       const id = Square.convertToChessGrid({
         ...lastSquare.gridPosition,
-        x: lastSquare.gridPosition.x - 1 * upOrDown,
+        y: lastSquare.gridPosition.y - 1 * upOrDown,
       });
 
       const possibleEPSquare = board.find((sq) => sq.squareId === id);
       const { piece: epPiece } = possibleEPSquare as Square;
+      
       if (
         epPiece &&
         (epPiece as Pawn).enPassant &&
@@ -69,30 +76,22 @@ export class Pawn extends Piece {
     }
 
     if (verticalMoveOnly && !lastPiece && Math.abs(vertical) < 3 && direc > 0) {
-      if (Math.abs(vertical) === 1) {
-        if (lastRef === lastSquare.chessPosition.y) {
-          return {
-            isValid: IsValidType.IN_PROCESS,
-            changeTeam: firstPiece?.team,
-          };
-        }
+      if ((firstPiece as Pawn).firstMoveDone && Math.abs(vertical) === 1) {
         return {
           isValid: IsValidType.YES,
           moveType: MoveType.MOVE,
-          changeProp: [ChangeProp.PAWN_EN_PASSANT, ChangeProp.PAWN_FIRST_M],
-          //changeId: firstPiece?.id,
         };
-      }
-      if (!(firstPiece as Pawn).firstMoveDone) {
+      } else if (!(firstPiece as Pawn).firstMoveDone) {
         return {
           isValid: IsValidType.YES,
           moveType: MoveType.MOVE,
-          changeProp: [ChangeProp.PAWN_FIRST_M],
-          //changeId: firstPiece?.id,
+          changeProp:
+            Math.abs(vertical) === 1
+              ? [ChangeProp.PAWN_EN_PASSANT, ChangeProp.FIRST_M]
+              : [ChangeProp.FIRST_M],
         };
       }
     }
-
     return { isValid: IsValidType.NO };
   }
 }

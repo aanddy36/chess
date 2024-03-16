@@ -11,6 +11,7 @@ export const crossedSquares = (
     startingPoint,
     endingPoint
   );
+
   let filteredBoard = [];
   if (vertical !== 0 && horizontal !== 0) {
     let direcX = horizontal >= 0 ? 1 : -1;
@@ -19,8 +20,8 @@ export const crossedSquares = (
       filteredBoard.push(
         board.find(
           (square) =>
-            square.gridPosition.x === Math.abs(startingPoint.x * direcY + i) &&
-            square.gridPosition.y === Math.abs(startingPoint.y * direcX + i)
+            square.gridPosition.x === Math.abs(startingPoint.x * direcX + i) &&
+            square.gridPosition.y === Math.abs(startingPoint.y * direcY + i)
         )
       );
     }
@@ -29,15 +30,15 @@ export const crossedSquares = (
   if (vertical !== 0) {
     let direc = vertical >= 0 ? 1 : -1;
     for (
-      let i = startingPoint.x * direc + 1;
-      i < (startingPoint.x + vertical) * direc;
+      let i = startingPoint.y * direc + 1;
+      i < (startingPoint.y + vertical) * direc;
       i++
     ) {
       filteredBoard.push(
         board.find(
           (square) =>
-            square.gridPosition.x === Math.abs(i) &&
-            square.gridPosition.y === startingPoint.y
+            square.gridPosition.y === Math.abs(i) &&
+            square.gridPosition.x === startingPoint.x
         )
       );
     }
@@ -46,26 +47,17 @@ export const crossedSquares = (
   //IF HORIZONTAL != 0
   let direc = horizontal >= 0 ? 1 : -1;
   for (
-    let i = startingPoint.y * direc + 1;
-    i < (startingPoint.y + horizontal) * direc;
+    let i = startingPoint.x * direc + 1;
+    i < (startingPoint.x + horizontal) * direc;
     i++
   ) {
     filteredBoard.push(
       board.find(
         (square) =>
-          square.gridPosition.y === Math.abs(i) &&
-          square.gridPosition.x === startingPoint.x
+          square.gridPosition.x === Math.abs(i) &&
+          square.gridPosition.y === startingPoint.y
       )
     );
   }
   return filteredBoard;
 };
-
-/* export const findDistance = (start: Coord, end: Coord) => {
-  let absX = end.x - start.x;
-  let absY = end.y - start.y;
-  return {
-    vertical: absX,
-    horizontal: absY,
-  };
-}; */

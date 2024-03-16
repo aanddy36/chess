@@ -1,5 +1,5 @@
-export const rows = [1, 2, 3, 4, 5, 6, 7, 8];
-export const cols = ["a", "b", "c", "d", "e", "f", "g", "h"];
+export const newCols = [1, 2, 3, 4, 5, 6, 7, 8];
+export const newRows = ["a", "b", "c", "d", "e", "f", "g", "h"];
 export const GRID_SIZE = 64;
 export enum SquareColor {
   GREEN,
@@ -26,7 +26,7 @@ export interface LastMove {
 }
 
 export enum ChangeProp {
-  PAWN_FIRST_M,
+  FIRST_M,
   PAWN_EN_PASSANT,
   ROOK_CASTLE,
   KING_CASTLE,

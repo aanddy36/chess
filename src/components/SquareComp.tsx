@@ -19,9 +19,10 @@ export const SquareComp = ({
   hoveredSquare,
 }: Props) => {
   const { squareId } = square;
+  
   return (
     <div
-      className={`w-16 h-16 font-semibold square border-[3px] ${
+      className={`w-16 h-16 font-semibold square ${
         square.color === SquareColor.WHITE
           ? squareId === firstSquare?.squareId ||
             squareId === lastMove.first ||
@@ -49,32 +50,32 @@ export const SquareComp = ({
     >
       {square.piece && (
         <div
-          className="w-[61px] h-[61px] bg-cover cursor-grab active:cursor-grabbing z-[1]"
+          className="w-16 h-16 bg-cover cursor-grab active:cursor-grabbing z-[1]"
           id={squareId}
           data-piece
           style={{ backgroundImage: `url('${square.piece.image}')` }}
         ></div>
       )}
-      {square.gridPosition.x === 7 && (
+      {square.gridPosition.y === 7 && (
         <span
           className={` absolute bottom-[1px] ${
             square.color === SquareColor.GREEN
               ? "text-whiteSquare"
               : "text-greenSquare"
           }`}
-          style={{ left: `${square.gridPosition.y * 64 + 52}px` }}
+          style={{ left: `${square.gridPosition.x * 64 + 52}px` }}
         >
           {square.chessPosition.x}
         </span>
       )}
-      {square.gridPosition.y === 0 && (
+      {square.gridPosition.x === 0 && (
         <span
           className={`absolute left-1 ${
             square.color === SquareColor.GREEN
               ? "text-whiteSquare"
               : "text-greenSquare"
           }`}
-          style={{ top: `${square.gridPosition.x * 64}px` }}
+          style={{ top: `${square.gridPosition.y * 64}px` }}
         >
           {square.chessPosition.y}
         </span>
