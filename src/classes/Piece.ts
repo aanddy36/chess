@@ -28,13 +28,15 @@ export class Piece {
     }
     return { isValid: IsValidType.NO };
   }
-  static validBishopMove(firstSquare: Square, lastSquare: Square): Validness {
+  static validBishopMove(
+    firstSquare: Square,
+    lastSquare: Square,
+  ): Validness {
     const { piece: lastPiece } = lastSquare;
     const { diagonalMoveOnly } = Square.findDistance(
       firstSquare.gridPosition,
       lastSquare.gridPosition
     );
-
     if (diagonalMoveOnly) {
       return {
         isValid: IsValidType.YES,

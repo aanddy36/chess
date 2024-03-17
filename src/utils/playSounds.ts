@@ -10,4 +10,8 @@ export function promotion() {
   const capture = new Audio("/src/assets/promote.mp3");
   capture.play();
 }
-export const arraySounds = [moveDone, capturePiece, promotion];
+export function check() {
+  const capture = new Audio("/src/assets/move-check.mp3");
+  capture.play();
+}
+export const arraySounds = [moveDone, capturePiece, promotion, check];

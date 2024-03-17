@@ -3,7 +3,7 @@ import { Pawn } from "../classes/Pawn";
 import { Piece } from "../classes/Piece";
 import { Rook } from "../classes/Rook";
 import { Square } from "../classes/Square";
-import { IsValidType, PiecesType, Validness } from "../models";
+import { IsValidType, MoveType, PiecesType, Team, Validness } from "../models";
 import { crossedSquares } from "./crossedSquares";
 import { movePiece } from "./movePiece";
 import { uptDangerZones } from "./uptDangerZones";
@@ -43,7 +43,7 @@ export const isValidMove = (
         ans = Rook.validRookMove(firstSquare, lastSquare);
         break;
       case PiecesType.KING:
-        ans = King.validKingMove(firstSquare, lastSquare);
+        ans = King.validKingMove(firstSquare, lastSquare, board);
         break;
     }
   } else {
@@ -61,12 +61,16 @@ export const isValidMove = (
       pieceToPromote,
     });
     uptBoard = uptDangerZones(newBoard);
-    let kingSqr = uptBoard.filter(
-      (sq) =>
-        sq.piece?.type === PiecesType.KING && sq.piece.team === firstPiece?.team
+    let kings = uptBoard.filter((sq) => sq.piece?.type === PiecesType.KING);
+    let allyKing = kings.filter((sq) => sq.piece?.team === firstPiece?.team)[0];
+    let enemyKing = kings.filter(
+      (sq) => sq.piece?.team === Piece.otherTeam(firstPiece?.team)
     )[0];
-    if (kingSqr.inDanger.includes(Piece.otherTeam(firstPiece?.team))) {
+    if (allyKing.inDanger.includes(Piece.otherTeam(firstPiece?.team))) {
       return { isValid: IsValidType.NO };
+    }
+    if (enemyKing.inDanger.includes(firstPiece?.team as Team)) {
+      return { isValid: IsValidType.YES, moveType: MoveType.CHECK };
     }
     return { ...ans, uptBoard };
   }

@@ -6,7 +6,6 @@ import {
   Team,
   Validness,
 } from "../models";
-import { fdzKnight } from "../utils/futureDangerZones";
 import { Piece } from "./Piece";
 import { Square } from "./Square";
 
@@ -16,7 +15,11 @@ export class King extends Piece {
   constructor(team: Team) {
     super(PiecesType.KING, team);
   }
-  static validKingMove(firstSquare: Square, lastSquare: Square): Validness {
+  static validKingMove(
+    firstSquare: Square,
+    lastSquare: Square,
+    board: Square[]
+  ): Validness {
     const { piece: lastPiece } = lastSquare;
     const { piece: firstPiece } = firstSquare;
     /* fdzKnight(lastSquare, firstSquare.piece?.type); */

@@ -1,7 +1,11 @@
 import { Square } from "../classes/Square";
 import { Coord, PiecesType, Team } from "../models";
 
-export function fdzPawn(upOrDown: number, lastSquare: Square) {
+export function fdzPawn(
+  upOrDown: number,
+  lastSquare: Square,
+  firstSquare: Square
+) {
   const aheadY =
     upOrDown === 1
       ? lastSquare.gridPosition.y + 1
@@ -13,7 +17,7 @@ export function fdzPawn(upOrDown: number, lastSquare: Square) {
         x: lastSquare.gridPosition.x - 1,
         y: aheadY,
       }),
-      team: lastSquare.piece?.team,
+      team: firstSquare.piece?.team,
     };
     dangerArray.push(newSq);
   }
@@ -23,16 +27,16 @@ export function fdzPawn(upOrDown: number, lastSquare: Square) {
         x: lastSquare.gridPosition.x + 1,
         y: aheadY,
       }),
-      team: lastSquare.piece?.team,
+      team: firstSquare.piece?.team,
     };
     dangerArray.push(newSq);
-  }  
+  }
   return dangerArray;
 }
 
-export function fdzKnight(lastSquare: Square, type: PiecesType | undefined) {
+export function fdzKnight(lastSquare: Square, firstSquare: Square) {
   const possiblePairs =
-    type === PiecesType.KNIGHT
+    firstSquare.piece?.type === PiecesType.KNIGHT
       ? [
           { x: 2, y: 1 },
           { x: 2, y: -1 },
@@ -62,7 +66,7 @@ export function fdzKnight(lastSquare: Square, type: PiecesType | undefined) {
     }
     const newSq = {
       id: Square.convertToChessGrid({ x: newX, y: newY }),
-      team: lastSquare.piece?.team,
+      team: firstSquare.piece?.team,
     };
     dangerArray.push(newSq);
   }
@@ -72,12 +76,11 @@ export function fdzKnight(lastSquare: Square, type: PiecesType | undefined) {
 export function fdzRook(
   lastSquare: Square,
   board: Square[],
-  firstSquare: Square,
-  type: PiecesType | undefined
+  firstSquare: Square
 ) {
   const { x, y } = lastSquare.gridPosition;
   let possiblePairs = [] as Coord[];
-  switch (type) {
+  switch (firstSquare.piece?.type) {
     case PiecesType.ROOK:
       possiblePairs = [
         { x: 0, y: 1 },
@@ -120,7 +123,7 @@ export function fdzRook(
       const newDanger = board.filter((sq) => sq.squareId === newId)[0];
       const newSq = {
         id: Square.convertToChessGrid(newDanger.gridPosition),
-        team: lastSquare.piece?.team,
+        team: firstSquare.piece?.team,
       };
       dangerArray.push(newSq);
       if (newDanger.piece && firstSquare.piece?.id !== newDanger.piece.id) {
@@ -145,17 +148,18 @@ export function evaluateFdz({
     case PiecesType.PAWN:
       return fdzPawn(
         lastSquare.piece?.team === Team.BLACK ? 1 : -1,
-        lastSquare
+        lastSquare,
+        firstSquare
       );
     case PiecesType.ROOK:
-      return fdzRook(lastSquare, board, firstSquare, lastSquare.piece?.type);
+      return fdzRook(lastSquare, board, firstSquare);
     case PiecesType.QUEEN:
-      return fdzRook(lastSquare, board, firstSquare, lastSquare.piece?.type);
+      return fdzRook(lastSquare, board, firstSquare);
     case PiecesType.BISHOP:
-      return fdzRook(lastSquare, board, firstSquare, lastSquare.piece?.type);
+      return fdzRook(lastSquare, board, firstSquare);
     case PiecesType.KING:
-      return fdzKnight(lastSquare, lastSquare.piece?.type);
+      return fdzKnight(lastSquare, firstSquare);
     case PiecesType.KNIGHT:
-      return fdzKnight(lastSquare, lastSquare.piece?.type);
+      return fdzKnight(lastSquare, firstSquare);
   }
 }
