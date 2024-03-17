@@ -6,6 +6,7 @@ import {
   Team,
   Validness,
 } from "../models";
+import { fdzKnight } from "../utils/futureDangerZones";
 import { Piece } from "./Piece";
 import { Square } from "./Square";
 
@@ -17,16 +18,21 @@ export class King extends Piece {
   }
   static validKingMove(firstSquare: Square, lastSquare: Square): Validness {
     const { piece: lastPiece } = lastSquare;
+    const { piece: firstPiece } = firstSquare;
+    /* fdzKnight(lastSquare, firstSquare.piece?.type); */
     const {
       verticalOneSquareMove,
       horizontalOneSquareMove,
       diagonalOneSquareMove,
     } = Square.findDistance(firstSquare.gridPosition, lastSquare.gridPosition);
-
+    const willBeInDanger = lastSquare.inDanger.some(
+      (sq) => sq != firstPiece?.team
+    );
     if (
-      verticalOneSquareMove ||
-      horizontalOneSquareMove ||
-      diagonalOneSquareMove
+      (verticalOneSquareMove ||
+        horizontalOneSquareMove ||
+        diagonalOneSquareMove) &&
+      !willBeInDanger
     ) {
       return {
         isValid: IsValidType.YES,

@@ -30,24 +30,48 @@ export function movePiece(
 
     if (squareId === lastSquare.squareId) {
       //CHANGE THE PIECE TO THE PROMOTED ONE
+      let newPiece;
+
       if (changeObj.pieceToPromote && firstSquare.piece) {
         //CREATE A PIECE OR A ROOK WITH FIRST MOVE DONE
-        firstSquare.piece =
+        newPiece =
           changeObj.pieceToPromote !== PiecesType.ROOK
             ? new Piece(changeObj.pieceToPromote, firstSquare.piece.team)
             : new Rook(firstSquare.piece.team, true);
-      }
-      //CHANGE PAWN PROPERTY WHEN IS MOVED FOR THE FIRST TIME
-      if (changeObj.prop?.includes(ChangeProp.FIRST_M)) {
-        (firstSquare.piece as Pawn | Rook | King).firstMoveDone = true;
-      }
-      //CHANGE PAWN PROPERTY TO NOT PASSANTABLE ANYMORE
-      if (changeObj.prop?.includes(ChangeProp.PAWN_EN_PASSANT)) {
-        (firstSquare.piece as Pawn).enPassant = false;
+      } else {
+        switch (firstSquare.piece?.type) {
+          case PiecesType.PAWN:
+            newPiece = new Pawn(firstSquare.piece.team);
+            break;
+          case PiecesType.ROOK:
+            newPiece = new Rook(firstSquare.piece.team);
+            break;
+          case PiecesType.KING:
+            newPiece = new King(firstSquare.piece.team);
+            break;
+          default:
+            newPiece = new Piece(
+              firstSquare.piece?.type as PiecesType,
+              firstSquare.piece?.team as Team
+            );
+
+            break;
+        }
+        //CHANGE PAWN PROPERTY WHEN IS MOVED FOR THE FIRST TIME
+        if (changeObj.prop?.includes(ChangeProp.FIRST_M)) {
+          (newPiece as Pawn | Rook | King).firstMoveDone = true;
+        }
+        //CHANGE PAWN PROPERTY TO NOT PASSANTABLE ANYMORE
+        if (
+          newPiece?.type === PiecesType.PAWN &&
+          changeObj.prop?.includes(ChangeProp.PAWN_EN_PASSANT)
+        ) {
+          (newPiece as Pawn).enPassant = false;
+        }
       }
 
       //WE RETURN THE SQUARE WITH THE UPDATED PIECE
-      return new Square(chessPosition, color, gridPosition, firstSquare.piece);
+      return new Square(chessPosition, color, gridPosition, newPiece);
     }
     //IF NOTHING CHANGED, RETURN THAT SQUARE UNTOUCHED
     return square;

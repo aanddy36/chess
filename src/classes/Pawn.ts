@@ -6,7 +6,6 @@ import {
   Team,
   Validness,
 } from "../models";
-import { futureDangerZonePawn } from "../utils/futureDangerZones";
 
 import { Piece } from "./Piece";
 import { Square } from "./Square";
@@ -33,7 +32,7 @@ export class Pawn extends Piece {
     const direc = vertical * upOrDown;
     const lastRef = firstPiece?.team === Team.BLACK ? 1 : 8;
 
-    futureDangerZonePawn(upOrDown, lastSquare);
+    //fdzPawn(upOrDown, lastSquare);
 
     if (lastRef === lastSquare.chessPosition.y) {
       return {
@@ -60,7 +59,7 @@ export class Pawn extends Piece {
 
       const possibleEPSquare = board.find((sq) => sq.squareId === id);
       const { piece: epPiece } = possibleEPSquare as Square;
-      
+
       if (
         epPiece &&
         (epPiece as Pawn).enPassant &&

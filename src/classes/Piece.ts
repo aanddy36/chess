@@ -9,7 +9,6 @@ export class Piece {
   image: string;
   id: string;
   constructor(type: PiecesType, team: Team) {
-    //this.gridPosition = gridPosition;
     this.type = type;
     this.team = team;
     this.image = `/src/assets/${this.team}${this.type}.png`;
@@ -60,5 +59,12 @@ export class Piece {
       };
     }
     return { isValid: IsValidType.NO };
+  }
+
+  static otherTeam(team: Team | undefined) {
+    if (team === Team.WHITE) {
+      return Team.BLACK;
+    }
+    return Team.WHITE;
   }
 }

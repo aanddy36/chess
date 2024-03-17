@@ -17,7 +17,10 @@ export class Rook extends Piece {
     super(PiecesType.ROOK, team);
     this.firstMoveDone = firstMoveDone;
   }
-  static validRookMove(firstSquare: Square, lastSquare: Square): Validness {
+  static validRookMove(
+    firstSquare: Square,
+    lastSquare: Square,
+  ): Validness {
     const { piece: lastPiece } = lastSquare;
     const { verticalMoveOnly, horizontalMoveOnly } = Square.findDistance(
       firstSquare.gridPosition,

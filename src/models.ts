@@ -1,3 +1,5 @@
+import { Square } from "./classes/Square";
+
 export const newCols = [1, 2, 3, 4, 5, 6, 7, 8];
 export const newRows = ["a", "b", "c", "d", "e", "f", "g", "h"];
 export const GRID_SIZE = 64;
@@ -12,7 +14,7 @@ export enum PiecesType {
   QUEEN = "q",
   KING = "k",
   BISHOP = "b",
-  CANCEL = "c"
+  CANCEL = "c",
 }
 
 export enum Team {
@@ -58,6 +60,7 @@ export interface Validness {
   changeTeam?: Team;
   pieceToPromote?: PiecesType;
   capturedInPassant?: string;
+  uptBoard?: Square[];
 }
 
 export const initialState: {
@@ -74,4 +77,3 @@ export const initialState: {
     last: null,
   },
 };
-

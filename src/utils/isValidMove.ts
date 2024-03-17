@@ -5,6 +5,8 @@ import { Rook } from "../classes/Rook";
 import { Square } from "../classes/Square";
 import { IsValidType, PiecesType, Validness } from "../models";
 import { crossedSquares } from "./crossedSquares";
+import { movePiece } from "./movePiece";
+import { uptDangerZones } from "./uptDangerZones";
 
 export const isValidMove = (
   board: Square[],
@@ -13,8 +15,7 @@ export const isValidMove = (
 ): Validness => {
   const { piece: firstPiece } = firstSquare;
   const { piece: lastPiece } = lastSquare;
-  console.log(firstSquare.gridPosition);
-  console.log(lastSquare.gridPosition);
+
   if (
     firstSquare.squareId === lastSquare.squareId ||
     (lastPiece && lastPiece.team === firstPiece?.team) ||
@@ -22,7 +23,7 @@ export const isValidMove = (
   ) {
     return { isValid: IsValidType.NO };
   }
-
+  let ans = {} as Validness;
   if (firstPiece?.type !== PiecesType.KNIGHT) {
     let middleSquares = crossedSquares(board, firstSquare, lastSquare);
     if (middleSquares.some((item) => item?.piece)) {
@@ -30,18 +31,44 @@ export const isValidMove = (
     }
     switch (firstPiece?.type) {
       case PiecesType.PAWN:
-        return Pawn.validPawnMove(firstSquare, lastSquare, board);
+        ans = Pawn.validPawnMove(firstSquare, lastSquare, board);
+        break;
       case PiecesType.QUEEN:
-        return Piece.validQueenMove(firstSquare, lastSquare);
+        ans = Piece.validQueenMove(firstSquare, lastSquare);
+        break;
       case PiecesType.BISHOP:
-        return Piece.validBishopMove(firstSquare, lastSquare);
+        ans = Piece.validBishopMove(firstSquare, lastSquare);
+        break;
       case PiecesType.ROOK:
-        return Rook.validRookMove(firstSquare, lastSquare);
+        ans = Rook.validRookMove(firstSquare, lastSquare);
+        break;
       case PiecesType.KING:
-        return King.validKingMove(firstSquare, lastSquare);
+        ans = King.validKingMove(firstSquare, lastSquare);
+        break;
     }
   } else {
-    return Piece.validKnightMove(firstSquare, lastSquare);
+    ans = Piece.validKnightMove(firstSquare, lastSquare);
   }
-  return { isValid: IsValidType.YES };
+  let uptBoard = [] as Square[];
+  if (ans.isValid === IsValidType.YES) {
+    const { changeProp, changeTeam, capturedInPassant, pieceToPromote } = ans;
+    const temp = [...board];
+
+    let newBoard = movePiece(firstSquare, lastSquare, temp, {
+      prop: changeProp,
+      changeTeam,
+      capturedInPassant,
+      pieceToPromote,
+    });
+    uptBoard = uptDangerZones(newBoard);
+    let kingSqr = uptBoard.filter(
+      (sq) =>
+        sq.piece?.type === PiecesType.KING && sq.piece.team === firstPiece?.team
+    )[0];
+    if (kingSqr.inDanger.includes(Piece.otherTeam(firstPiece?.team))) {
+      return { isValid: IsValidType.NO };
+    }
+    return { ...ans, uptBoard };
+  }
+  return { isValid: IsValidType.NO };
 };

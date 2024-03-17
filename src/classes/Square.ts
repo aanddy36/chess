@@ -1,4 +1,4 @@
-import { Coord, SquareColor, newRows } from "../models";
+import { Coord, SquareColor, Team, newRows } from "../models";
 import { Pawn } from "./Pawn";
 import { Piece } from "./Piece";
 import { Rook } from "./Rook";
@@ -7,12 +7,17 @@ interface ChessCoord {
   x: string;
   y: number;
 }
+export interface InDanger {
+  id: string;
+  team: Team;
+}
 
 export class Square {
   chessPosition: ChessCoord;
   color: SquareColor;
   gridPosition: Coord;
   piece: Piece | Pawn | Rook | null;
+  /* inDanger: InDanger[] | []; */
 
   static findDistance(start: Coord, end: Coord) {
     let absX = end.x - start.x;
@@ -33,7 +38,7 @@ export class Square {
     const nums = [8, 7, 6, 5, 4, 3, 2, 1];
     return `${newRows[coord.x]}${nums[coord.y]}`;
   }
-
+  inDanger = [] as Team[]
   constructor(
     chessPosition: ChessCoord,
     color: SquareColor,

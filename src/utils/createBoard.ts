@@ -3,13 +3,8 @@ import { Pawn } from "../classes/Pawn";
 import { Piece } from "../classes/Piece";
 import { Rook } from "../classes/Rook";
 import { Square } from "../classes/Square";
-import {
-  PiecesType,
-  SquareColor,
-  Team,
-  newCols,
-  newRows,
-} from "../models";
+import { PiecesType, SquareColor, Team, newCols, newRows } from "../models";
+import { uptDangerZones } from "./uptDangerZones";
 
 const initalPieces = [
   { piece: new Rook(Team.BLACK), pos: { x: 0, y: 0 } },
@@ -47,7 +42,7 @@ const initalPieces = [
 ];
 
 export function createBoard() {
-  const board = [];
+  const board = [] as Square[];
   let gridY = 0;
   for (let i = newCols.length - 1; i >= 0; i--) {
     let gridX = 0;
@@ -72,5 +67,7 @@ export function createBoard() {
     }
     gridY += 1;
   }
-  return board;
+
+  const newBoard = uptDangerZones(board)
+  return newBoard;
 }

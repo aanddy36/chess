@@ -15,10 +15,9 @@ import {
 } from "./models";
 import { arraySounds } from "./utils/playSounds";
 import { PromotionMenu } from "./components/PromotionMenu";
-import { movePiece } from "./utils/movePiece";
 
 function App() {
-  const [board, setBoard] = useState(createBoard());
+  const [board, setBoard] = useState<Square[]>([]);
   const [mouseActive, setMouseActive] = useState(false);
   const [cursorPos, setCursorPos] = useState(initialState.cursorPos);
   const grabbedOne = useRef<HTMLDivElement | null>(null);
@@ -34,27 +33,17 @@ function App() {
   const [hoveredSquare, setHoveredSquare] = useState<string | null>(null);
 
   useEffect(() => {
-    const {
-      isValid,
-      changeProp,
-      capturedInPassant,
-      changeTeam,
-      moveType,
-      pieceToPromote,
-    } = isValidObj;
+    let myBoard = createBoard();
+    setBoard(myBoard);
+  }, []);
 
+  useEffect(() => {
+    const { isValid, changeTeam, moveType } = isValidObj;
     if (isValid !== IsValidType.NULL && firstSquare && lastSquare) {
       switch (isValid) {
         case IsValidType.YES:
-          const temp = [...board];
-          setBoard(
-            movePiece(firstSquare, lastSquare, temp, {
-              prop: changeProp,
-              changeTeam,
-              capturedInPassant,
-              pieceToPromote,
-            })
-          );
+          const { uptBoard } = isValidObj;
+          setBoard(uptBoard as Square[]);
           setLastMoveIDs({
             first: firstSquare.squareId,
             last: lastSquare.squareId,
@@ -83,7 +72,7 @@ function App() {
           }
           if (promotionDec.current) {
             promotionDec.current.style.left = `${
-              lastSquare.gridPosition.y * 64
+              lastSquare.gridPosition.x * 64
             }px`;
             promotionDec.current.style.visibility = "visible";
             changeTeam === Team.BLACK
