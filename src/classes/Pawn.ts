@@ -32,16 +32,17 @@ export class Pawn extends Piece {
     const direc = vertical * upOrDown;
     const lastRef = firstPiece?.team === Team.BLACK ? 1 : 8;
 
-    //fdzPawn(upOrDown, lastSquare);
-
-    if (lastRef === lastSquare.chessPosition.y) {
-      return {
-        isValid: IsValidType.IN_PROCESS,
-        changeTeam: firstPiece?.team,
-      };
-    }
-
+    
+    //PAWN ATTACK DIAGONALLY
     if (diagonalOneSquareMove && direc > 0) {
+      //IF IS THE LAST SQUARE
+      if (lastRef === lastSquare.chessPosition.y) {
+        return {
+          isValid: IsValidType.IN_PROCESS,
+          changeTeam: firstPiece?.team,
+        };
+      }
+      //IF THERE IS AN ENEMY PAWN
       if (lastPiece) {
         return {
           isValid: IsValidType.YES,
@@ -59,7 +60,7 @@ export class Pawn extends Piece {
 
       const possibleEPSquare = board.find((sq) => sq.squareId === id);
       const { piece: epPiece } = possibleEPSquare as Square;
-
+      
       if (
         epPiece &&
         (epPiece as Pawn).enPassant &&
@@ -74,8 +75,14 @@ export class Pawn extends Piece {
       }
     }
 
-    if (verticalMoveOnly && !lastPiece && Math.abs(vertical) < 3 && direc > 0) {
+    if (verticalMoveOnly && !lastPiece && Math.abs(vertical) < 3 && direc > 0) {      
       if ((firstPiece as Pawn).firstMoveDone && Math.abs(vertical) === 1) {
+        if (lastRef === lastSquare.chessPosition.y) {          
+          return {
+            isValid: IsValidType.IN_PROCESS,
+            changeTeam: firstPiece?.team,
+          };
+        }
         return {
           isValid: IsValidType.YES,
           moveType: MoveType.MOVE,

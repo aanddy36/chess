@@ -58,13 +58,17 @@ export function movePiece(
             break;
         }
         //CHANGE PAWN PROPERTY WHEN IS MOVED FOR THE FIRST TIME
-        if (changeObj.prop?.includes(ChangeProp.FIRST_M)) {
+        if (
+          changeObj.prop?.includes(ChangeProp.FIRST_M) ||
+          (firstSquare.piece as Pawn).firstMoveDone === true
+        ) {
           (newPiece as Pawn | Rook | King).firstMoveDone = true;
         }
         //CHANGE PAWN PROPERTY TO NOT PASSANTABLE ANYMORE
         if (
           newPiece?.type === PiecesType.PAWN &&
-          changeObj.prop?.includes(ChangeProp.PAWN_EN_PASSANT)
+          changeObj.prop?.includes(ChangeProp.PAWN_EN_PASSANT) ||
+          (firstSquare.piece as Pawn).enPassant === false
         ) {
           (newPiece as Pawn).enPassant = false;
         }

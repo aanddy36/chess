@@ -70,5 +70,5 @@ export const isValidMove = (
     }
     return { ...ans, uptBoard };
   }
-  return { isValid: IsValidType.NO };
+  return ans;
 };

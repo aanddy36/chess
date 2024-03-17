@@ -15,6 +15,8 @@ import {
 } from "./models";
 import { arraySounds } from "./utils/playSounds";
 import { PromotionMenu } from "./components/PromotionMenu";
+import { movePiece } from "./utils/movePiece";
+import { uptDangerZones } from "./utils/uptDangerZones";
 
 function App() {
   const [board, setBoard] = useState<Square[]>([]);
@@ -42,7 +44,24 @@ function App() {
     if (isValid !== IsValidType.NULL && firstSquare && lastSquare) {
       switch (isValid) {
         case IsValidType.YES:
-          const { uptBoard } = isValidObj;
+          let { uptBoard } = isValidObj;
+          if (!uptBoard) {
+            const {
+              changeProp,
+              changeTeam,
+              capturedInPassant,
+              pieceToPromote,
+            } = isValidObj;
+            let temp = [...board];
+            let newBoard = movePiece(firstSquare, lastSquare, temp, {
+              prop: changeProp,
+              changeTeam,
+              capturedInPassant,
+              pieceToPromote,
+            });
+            uptBoard = uptDangerZones(newBoard);
+          }
+
           setBoard(uptBoard as Square[]);
           setLastMoveIDs({
             first: firstSquare.squareId,
