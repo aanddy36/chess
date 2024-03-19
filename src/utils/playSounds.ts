@@ -14,4 +14,8 @@ export function check() {
   const capture = new Audio("/src/assets/move-check.mp3");
   capture.play();
 }
-export const arraySounds = [moveDone, capturePiece, promotion, check];
+export function castle() {
+  const capture = new Audio("/src/assets/castle.mp3");
+  capture.play();
+}
+export const arraySounds = [moveDone, capturePiece, promotion, check, castle];

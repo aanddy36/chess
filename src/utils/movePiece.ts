@@ -10,6 +10,10 @@ interface ChangeObj {
   changeTeam: Team | undefined;
   capturedInPassant: string | undefined;
   pieceToPromote: PiecesType | undefined;
+  rookChange?: {
+    firstSq: Square;
+    lastSq: Square;
+  };
 }
 
 export function movePiece(
@@ -23,7 +27,8 @@ export function movePiece(
     //REMOVE A PIECE FROM A SQUARE
     if (
       squareId === firstSquare.squareId ||
-      squareId === changeObj.capturedInPassant
+      squareId === changeObj.capturedInPassant ||
+      squareId === changeObj.rookChange?.firstSq.squareId
     ) {
       return new Square(chessPosition, color, gridPosition);
     }
@@ -66,8 +71,8 @@ export function movePiece(
         }
         //CHANGE PAWN PROPERTY TO NOT PASSANTABLE ANYMORE
         if (
-          newPiece?.type === PiecesType.PAWN &&
-          changeObj.prop?.includes(ChangeProp.PAWN_EN_PASSANT) ||
+          (newPiece?.type === PiecesType.PAWN &&
+            changeObj.prop?.includes(ChangeProp.PAWN_EN_PASSANT)) ||
           (firstSquare.piece as Pawn).enPassant === false
         ) {
           (newPiece as Pawn).enPassant = false;
@@ -75,6 +80,10 @@ export function movePiece(
       }
 
       //WE RETURN THE SQUARE WITH THE UPDATED PIECE
+      return new Square(chessPosition, color, gridPosition, newPiece);
+    }
+    if (squareId === changeObj.rookChange?.lastSq.squareId) {
+      let newPiece = new Rook(firstSquare.piece?.team as Team, true);
       return new Square(chessPosition, color, gridPosition, newPiece);
     }
     //IF NOTHING CHANGED, RETURN THAT SQUARE UNTOUCHED

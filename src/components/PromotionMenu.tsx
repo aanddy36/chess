@@ -1,31 +1,58 @@
 import { FaXmark } from "react-icons/fa6";
-import { PiecesType, Team, Validness } from "../models";
-import { LegacyRef } from "react";
+import { IsValidType, MoveType, PiecesType, Team } from "../models";
+import { LegacyRef, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import { validateMove } from "../features/chessboardSlice";
 
 interface Props {
-  setPiecePromoted: (arg: PiecesType) => void;
-  promotionDec: LegacyRef<HTMLDivElement> | undefined;
-  isValidObj: Validness;
-  selectPromotion: (arg: any) => void;
+  //promotionDec: LegacyRef<HTMLDivElement> | undefined;
 }
 
-export const PromotionMenu = ({
-  setPiecePromoted,
-  promotionDec,
-  isValidObj,
-  selectPromotion,
-}: Props) => {
+export const PromotionMenu = (/* { promotionDec }: Props */) => {
+  const { moveStatus, lastSquare } = useSelector(
+    (store: RootState) => store.chess
+  );
+  const dispatch = useDispatch();
+  const promotionDec = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const { isValid, changeTeam } = moveStatus;
+    if (isValid === IsValidType.IN_PROCESS) {
+      if (promotionDec.current && lastSquare) {
+        promotionDec.current.style.left = `${lastSquare.gridPosition.x * 64}px`;
+        promotionDec.current.style.visibility = "visible";
+        changeTeam === Team.BLACK
+          ? (promotionDec.current.style.bottom = "0px")
+          : (promotionDec.current.style.top = "0px");
+      }
+    }
+  }, [moveStatus]);
+
+  const selectPromPiece = (piece: PiecesType) => {
+    if (piece === PiecesType.CANCEL) {
+      dispatch(validateMove({ isValid: IsValidType.NO }));
+    } else {
+      dispatch(
+        validateMove({
+          isValid: IsValidType.YES,
+          moveType: MoveType.PROMOTE,
+          pieceToPromote: piece as PiecesType,
+        })
+      );
+    }
+  };
   return (
     <>
       <div
         className=" absolute inset-0 z-[1]"
-        onClick={() => setPiecePromoted(PiecesType.CANCEL)}
+        onClick={() => selectPromPiece(PiecesType.CANCEL)}
       ></div>
       <div
         ref={promotionDec}
         className={`border absolute z-[2] bg-white rounded-md flex w-16 overflow-hidden 
             shadow-md shadow-black/50 invisible ${
-              isValidObj.changeTeam === Team.BLACK
+              moveStatus.changeTeam === Team.BLACK
                 ? "flex-col-reverse"
                 : "flex-col"
             }`}
@@ -35,14 +62,16 @@ export const PromotionMenu = ({
            hover:bg-gray-200 relative"
           htmlFor={PiecesType.QUEEN}
           style={{
-            backgroundImage: `url('/src/assets/${isValidObj.changeTeam}q.png')`,
+            backgroundImage: `url('/src/assets/${moveStatus.changeTeam}q.png')`,
           }}
         >
           <input
             name="promotion"
             className=" absolute inset-0 invisible"
             id={PiecesType.QUEEN}
-            onClick={(e) => selectPromotion(e)}
+            onClick={(e) =>
+              selectPromPiece((e.target as HTMLInputElement).id as PiecesType)
+            }
           />
         </label>
         <label
@@ -50,14 +79,16 @@ export const PromotionMenu = ({
            hover:bg-gray-200 relative"
           htmlFor={PiecesType.KNIGHT}
           style={{
-            backgroundImage: `url('/src/assets/${isValidObj.changeTeam}n.png')`,
+            backgroundImage: `url('/src/assets/${moveStatus.changeTeam}n.png')`,
           }}
         >
           <input
             name="promotion"
             className=" absolute inset-0 invisible"
             id={PiecesType.KNIGHT}
-            onClick={(e) => selectPromotion(e)}
+            onClick={(e) =>
+              selectPromPiece((e.target as HTMLInputElement).id as PiecesType)
+            }
           />
         </label>
         <label
@@ -65,14 +96,16 @@ export const PromotionMenu = ({
            hover:bg-gray-200 relative"
           htmlFor={PiecesType.ROOK}
           style={{
-            backgroundImage: `url('/src/assets/${isValidObj.changeTeam}r.png')`,
+            backgroundImage: `url('/src/assets/${moveStatus.changeTeam}r.png')`,
           }}
         >
           <input
             name="promotion"
             className=" absolute inset-0 invisible"
             id={PiecesType.ROOK}
-            onClick={(e) => selectPromotion(e)}
+            onClick={(e) =>
+              selectPromPiece((e.target as HTMLInputElement).id as PiecesType)
+            }
           />
         </label>
         <label
@@ -80,14 +113,16 @@ export const PromotionMenu = ({
            hover:bg-gray-200 relative"
           htmlFor={PiecesType.BISHOP}
           style={{
-            backgroundImage: `url('/src/assets/${isValidObj.changeTeam}b.png')`,
+            backgroundImage: `url('/src/assets/${moveStatus.changeTeam}b.png')`,
           }}
         >
           <input
             name="promotion"
             className=" absolute inset-0 invisible"
             id={PiecesType.BISHOP}
-            onClick={(e) => selectPromotion(e)}
+            onClick={(e) =>
+              selectPromPiece((e.target as HTMLInputElement).id as PiecesType)
+            }
           />
         </label>
         <label
@@ -99,7 +134,9 @@ export const PromotionMenu = ({
             name="promotion"
             className=" absolute inset-0 invisible"
             id={PiecesType.CANCEL}
-            onClick={(e) => selectPromotion(e)}
+            onClick={(e) =>
+              selectPromPiece((e.target as HTMLInputElement).id as PiecesType)
+            }
           />
           <FaXmark className="scale-[1.3]" />
         </label>

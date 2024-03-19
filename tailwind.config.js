@@ -9,7 +9,12 @@ export default {
         "whiteSquare":"#ebecd0",
         "selectedSquare":"#FFFF33",
         "whiteSelected":"#F5F682",
-        "greenSelected":"#B9CA43"
+        "greenSelected":"#B9CA43",
+        "blackBtn": "#141413",
+        "greenBorder": "#9BC95D",
+        "greenHover":"#bfe294",
+        "timerBtn":"#454441",
+        "timerHover":"#706e6a"
       }
     },
   },

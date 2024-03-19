@@ -1,116 +1,47 @@
 import { useEffect, useRef, useState } from "react";
-import { createBoard } from "./utils/createBoard";
 import { checkXLimits, checkYLimits } from "./utils/grabPiece";
 import { SquareComp } from "./components/SquareComp";
-import { Square } from "./classes/Square";
 import { isValidMove } from "./utils/isValidMove";
-import {
-  IsValidType,
-  LastMove,
-  MoveType,
-  PiecesType,
-  Team,
-  Validness,
-  initialState,
-} from "./models";
-import { arraySounds } from "./utils/playSounds";
+import { IsValidType } from "./models";
 import { PromotionMenu } from "./components/PromotionMenu";
-import { movePiece } from "./utils/movePiece";
-import { uptDangerZones } from "./utils/uptDangerZones";
+import { FaAngleDown, FaRegClock } from "react-icons/fa6";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./store";
+import {
+  changeCursorPos,
+  createBoard,
+  validateMove,
+} from "./features/chessboardSlice";
 
 function App() {
-  const [board, setBoard] = useState<Square[]>([]);
-  const [mouseActive, setMouseActive] = useState(false);
-  const [cursorPos, setCursorPos] = useState(initialState.cursorPos);
   const grabbedOne = useRef<HTMLDivElement | null>(null);
-  const [firstSquare, setFirstSquare] = useState<Square | null>(null);
-  const [lastSquare, setLastSquare] = useState<Square | null>(null);
-  const [lastMoveIDs, setLastMoveIDs] = useState<LastMove>(
-    initialState.lastMoveIDs
-  );
-  const [isValidObj, setIsValidObj] = useState<Validness>(initialState.isValid);
   const boardRef = useRef<HTMLDivElement | null>(null);
-  const promotionDec = useRef<HTMLDivElement | null>(null);
-  const [piecePromoted, setPiecePromoted] = useState<PiecesType | null>(null);
   const [hoveredSquare, setHoveredSquare] = useState<string | null>(null);
 
+  const { board, firstSquare, lastSquare, cursorPos, mouseActive, moveStatus } =
+    useSelector((store: RootState) => store.chess);
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    let myBoard = createBoard();
-    setBoard(myBoard);
+    dispatch(createBoard());
   }, []);
 
   useEffect(() => {
-    const { isValid, changeTeam, moveType } = isValidObj;
-    if (isValid !== IsValidType.NULL && firstSquare && lastSquare) {
-      switch (isValid) {
-        case IsValidType.YES:
-          let { uptBoard } = isValidObj;
-          if (!uptBoard) {
-            const {
-              changeProp,
-              changeTeam,
-              capturedInPassant,
-              pieceToPromote,
-            } = isValidObj;
-            let temp = [...board];
-            let newBoard = movePiece(firstSquare, lastSquare, temp, {
-              prop: changeProp,
-              changeTeam,
-              capturedInPassant,
-              pieceToPromote,
-            });
-            uptBoard = uptDangerZones(newBoard);
-          }
+    const { isValid } = moveStatus;
 
-          setBoard(uptBoard as Square[]);
-          setLastMoveIDs({
-            first: firstSquare.squareId,
-            last: lastSquare.squareId,
-          });
-          moveType !== undefined && arraySounds[moveType]();
-          break;
-
-        case IsValidType.NO:
-          if (grabbedOne.current) {
-            grabbedOne.current.style.position = `static`;
-          }
-          break;
-
-        case IsValidType.IN_PROCESS:
-          if (piecePromoted) {
-            if (piecePromoted === PiecesType.CANCEL) {
-              setIsValidObj({ isValid: IsValidType.NO });
-            } else {
-              setIsValidObj({
-                isValid: IsValidType.YES,
-                moveType: MoveType.PROMOTE,
-                pieceToPromote: piecePromoted,
-              });
-            }
-            setPiecePromoted(null);
-          }
-          if (promotionDec.current) {
-            promotionDec.current.style.left = `${
-              lastSquare.gridPosition.x * 64
-            }px`;
-            promotionDec.current.style.visibility = "visible";
-            changeTeam === Team.BLACK
-              ? (promotionDec.current.style.bottom = "0px")
-              : (promotionDec.current.style.top = "0px");
-          }
-          break;
+    if (isValid === IsValidType.YES) {
+      grabbedOne.current = null;
+    } else if (isValid === IsValidType.NO) {
+      if (grabbedOne.current) {
+        grabbedOne.current.style.position = `static`;
       }
-      if (isValid !== IsValidType.IN_PROCESS) {
-        grabbedOne.current = null;
-        setFirstSquare(null);
-        setLastSquare(null);
-      }
+      grabbedOne.current = null;
     }
-  }, [isValidObj, piecePromoted]);
+  }, [moveStatus]);
 
   useEffect(() => {
     if (lastSquare && firstSquare) {
-      setIsValidObj(isValidMove(board, firstSquare, lastSquare));
+      dispatch(validateMove(isValidMove(board, firstSquare, lastSquare)));
     }
   }, [firstSquare, lastSquare]);
 
@@ -133,38 +64,6 @@ function App() {
     }
   }, [cursorPos]);
 
-  const handleMouseDown = (e: MouseEvent) => {
-    let temp = e.target as HTMLDivElement;
-    const selectedSquare = board.find((square) => square.squareId === temp.id);
-    if (temp.dataset.piece) {
-      grabbedOne.current = temp;
-      setMouseActive(true);
-      setFirstSquare(selectedSquare as Square);
-    }
-  };
-
-  const handleMouseUp = (e: MouseEvent) => {
-    setHoveredSquare(null);
-    const elements = document.elementsFromPoint(e.clientX, e.clientY);
-    const temp = elements.find((el) => el.classList.contains("square"));
-    const selectedSquare = board.find((square) => square.squareId === temp?.id);
-
-    if (grabbedOne.current) {
-      if (selectedSquare) {
-        setLastSquare(selectedSquare as Square);
-      } else {
-        grabbedOne.current.style.position = `static`;
-        grabbedOne.current = null;
-      }
-      setMouseActive(false);
-      setCursorPos(initialState.cursorPos);
-    }
-  };
-
-  const selectPromotion = (e: React.MouseEvent<HTMLInputElement>) => {
-    setPiecePromoted((e.target as HTMLInputElement).id as PiecesType);
-  };
-
   useEffect(() => {
     const watchCursor = (e: any) => {
       const { offsetTop, offsetLeft } = boardRef.current as HTMLDivElement;
@@ -177,8 +76,12 @@ function App() {
         if (hoveredSquare !== selectedSquare?.squareId && selectedSquare) {
           setHoveredSquare(selectedSquare?.squareId);
         }
-
-        setCursorPos({ x: e.clientX - offsetLeft, y: e.clientY - offsetTop });
+        dispatch(
+          changeCursorPos({
+            x: e.clientX - offsetLeft,
+            y: e.clientY - offsetTop,
+          })
+        );
       }
     };
     document.addEventListener("mousemove", watchCursor);
@@ -188,33 +91,85 @@ function App() {
   }, [mouseActive]);
 
   return (
-    <main className=" bg-bg w-screen h-screen grid place-content-center">
-      <div
-        className=" w-[512px] h-[512px] flex flex-wrap rounded-md relative overflow-hidden"
-        ref={boardRef}
-      >
-        {board.map((square) => {
-          return (
-            <SquareComp
-              key={square.squareId}
-              square={square}
-              handleMouseDown={handleMouseDown}
-              handleMouseUp={handleMouseUp}
-              firstSquare={firstSquare}
-              lastMove={lastMoveIDs}
-              hoveredSquare={hoveredSquare}
-            />
-          );
-        })}
-        {isValidObj.isValid === IsValidType.IN_PROCESS && (
-          <PromotionMenu
-            selectPromotion={selectPromotion}
-            isValidObj={isValidObj}
-            setPiecePromoted={setPiecePromoted}
-            promotionDec={promotionDec}
-          />
-        )}
-      </div>
+    <main
+      className=" bg-bg w-screen h-screen flex items-center justify-center gap-8
+       flex-col"
+    >
+      <h1 className=" text-white font-extrabold text-5xl">playChess</h1>
+      <section className=" flex items-center justify-center gap-12">
+        <section className="h-[512px] flex flex-col justify-between gap-6">
+          <div className=" h-full flex flex-col justify-between">
+            <div className="flex flex-col gap-2 items-center">
+              <img
+                src="/src/assets/black_user.png"
+                className=" w-24 rounded-md"
+              />
+              <h4 className=" text-white font-medium">Black</h4>
+            </div>
+            <button
+              disabled
+              className="text-white text-2xl font-semibold tracking-wider bg-blackBtn
+            w-full py-1 rounded-md border-b-[5px] border-greenBorder opacity-50"
+            >
+              10:00
+            </button>
+          </div>
+          <div className=" h-full flex flex-col-reverse justify-between">
+            <div className="flex flex-col gap-2 items-center">
+              <h4 className=" text-white font-medium">White</h4>
+              <img
+                src="/src/assets/white_user.png"
+                className=" w-24 rounded-md"
+              />
+            </div>
+            <button
+              disabled
+              className="text-blackBtn text-2xl font-semibold tracking-wider bg-white 
+            w-full py-1 rounded-md border-t-[5px] border-greenBorder opacity-50"
+            >
+              10:00
+            </button>
+          </div>
+        </section>
+
+        <div
+          className=" w-[512px] h-[512px] flex flex-wrap rounded-md relative overflow-hidden"
+          ref={boardRef}
+        >
+          {board.map((square) => {
+            return (
+              <SquareComp
+                key={square.squareId}
+                square={square}
+                grabbedOne={grabbedOne}
+                hoveredSquare={hoveredSquare}
+                setHoveredSquare={setHoveredSquare}
+              />
+            );
+          })}
+          {moveStatus.isValid === IsValidType.IN_PROCESS && <PromotionMenu />}
+        </div>
+
+        <div className=" flex flex-col w-32 gap-4">
+          <button
+            className=" text-white font-medium bg-timerBtn py-2 rounded-md justify-between
+           duration-200 transition-colors hover:bg-timerHover flex items-center pr-2 pl-4"
+          >
+            <div className=" flex items-center gap-2">
+              <FaRegClock className=" text-greenBorder" />
+              10 min
+            </div>
+            <FaAngleDown />
+          </button>
+          <button
+            className=" bg-greenBorder text-white text-xl font-bold rounded-md
+           py-[6px] border-b-[5px] border-greenSquare transition-color duration-200
+            hover:bg-greenHover"
+          >
+            Jugar
+          </button>
+        </div>
+      </section>
     </main>
   );
 }

@@ -6,6 +6,7 @@ import { Square } from "../classes/Square";
 import { PiecesType, SquareColor, Team, newCols, newRows } from "../models";
 import { uptDangerZones } from "./uptDangerZones";
 
+
 const initalPieces = [
   { piece: new Rook(Team.BLACK), pos: { x: 0, y: 0 } },
   { piece: new Piece(PiecesType.KNIGHT, Team.BLACK), pos: { x: 1, y: 0 } },
@@ -41,7 +42,7 @@ const initalPieces = [
   { piece: new Rook(Team.WHITE), pos: { x: 7, y: 7 } },
 ];
 
-export function createBoard() {
+export function createBoardV2() {
   const board = [] as Square[];
   let gridY = 0;
   for (let i = newCols.length - 1; i >= 0; i--) {

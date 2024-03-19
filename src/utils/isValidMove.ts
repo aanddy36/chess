@@ -51,7 +51,7 @@ export const isValidMove = (
   }
   let uptBoard = [] as Square[];
   if (ans.isValid === IsValidType.YES) {
-    const { changeProp, changeTeam, capturedInPassant, pieceToPromote } = ans;
+    const { changeProp, changeTeam, capturedInPassant, pieceToPromote, rookChange } = ans;
     const temp = [...board];
 
     let newBoard = movePiece(firstSquare, lastSquare, temp, {
@@ -59,6 +59,7 @@ export const isValidMove = (
       changeTeam,
       capturedInPassant,
       pieceToPromote,
+      rookChange
     });
     uptBoard = uptDangerZones(newBoard);
     let kings = uptBoard.filter((sq) => sq.piece?.type === PiecesType.KING);

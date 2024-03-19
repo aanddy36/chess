@@ -61,6 +61,10 @@ export interface Validness {
   pieceToPromote?: PiecesType;
   capturedInPassant?: string;
   uptBoard?: Square[];
+  rookChange?: {
+    firstSq: Square;
+    lastSq: Square;
+  };
 }
 
 export const initialState: {
