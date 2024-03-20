@@ -1,40 +1,336 @@
-import { King } from "./classes/King";
-import { Pawn } from "./classes/Pawn";
-import { Piece } from "./classes/Piece";
-import { Rook } from "./classes/Rook";
-import { PiecesType, Team } from "./models";
+import { nanoid } from "nanoid";
+import { Coord, PieceType, PiecesType, Team } from "./types/models";
 
-export const initalPieces = [
-    { piece: new Rook(Team.BLACK), pos: { x: 0, y: 0 } },
-    { piece: new Piece(PiecesType.KNIGHT, Team.BLACK), pos: { x: 1, y: 0 } },
-    { piece: new Piece(PiecesType.BISHOP, Team.BLACK), pos: { x: 2, y: 0 } },
-    { piece: new Piece(PiecesType.QUEEN, Team.BLACK), pos: { x: 3, y: 0 } },
-    { piece: new King(Team.BLACK), pos: { x: 4, y: 0 } },
-    { piece: new Piece(PiecesType.BISHOP, Team.BLACK), pos: { x: 5, y: 0 } },
-    { piece: new Piece(PiecesType.KNIGHT, Team.BLACK), pos: { x: 6, y: 0 } },
-    { piece: new Rook(Team.BLACK), pos: { x: 7, y: 0 } },
-    { piece: new Pawn(Team.BLACK), pos: { x: 0, y: 1 } },
-    { piece: new Pawn(Team.BLACK), pos: { x: 1, y: 1 } },
-    { piece: new Pawn(Team.BLACK), pos: { x: 2, y: 1 } },
-    { piece: new Pawn(Team.BLACK), pos: { x: 3, y: 1 } },
-    { piece: new Pawn(Team.BLACK), pos: { x: 4, y: 1 } },
-    { piece: new Pawn(Team.BLACK), pos: { x: 5, y: 1 } },
-    { piece: new Pawn(Team.BLACK), pos: { x: 6, y: 1 } },
-    { piece: new Pawn(Team.BLACK), pos: { x: 7, y: 1 } },
-    { piece: new Pawn(Team.WHITE), pos: { x: 0, y: 6 } },
-    { piece: new Pawn(Team.WHITE), pos: { x: 1, y: 6 } },
-    { piece: new Pawn(Team.WHITE), pos: { x: 2, y: 6 } },
-    { piece: new Pawn(Team.WHITE), pos: { x: 3, y: 6 } },
-    { piece: new Pawn(Team.WHITE), pos: { x: 4, y: 6 } },
-    { piece: new Pawn(Team.WHITE), pos: { x: 5, y: 6 } },
-    { piece: new Pawn(Team.WHITE), pos: { x: 6, y: 6 } },
-    { piece: new Pawn(Team.WHITE), pos: { x: 7, y: 6 } },
-    { piece: new Rook(Team.WHITE), pos: { x: 0, y: 7 } },
-    { piece: new Piece(PiecesType.KNIGHT, Team.WHITE), pos: { x: 1, y: 7 } },
-    { piece: new Piece(PiecesType.BISHOP, Team.WHITE), pos: { x: 2, y: 7 } },
-    { piece: new Piece(PiecesType.QUEEN, Team.WHITE), pos: { x: 3, y: 7 } },
-    { piece: new King(Team.WHITE), pos: { x: 4, y: 7 } },
-    { piece: new Piece(PiecesType.BISHOP, Team.WHITE), pos: { x: 5, y: 7 } },
-    { piece: new Piece(PiecesType.KNIGHT, Team.WHITE), pos: { x: 6, y: 7 } },
-    { piece: new Rook(Team.WHITE), pos: { x: 7, y: 7 } },
-  ];
+interface Props {
+  piece: PieceType;
+  pos: Coord;
+}
+
+export const startingPieces: Props[] = [
+  {
+    piece: {
+      type: PiecesType.ROOK,
+      team: Team.BLACK,
+      image: `/src/assets/br.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+    },
+    pos: { x: 0, y: 0 },
+  },
+  {
+    piece: {
+      type: PiecesType.KNIGHT,
+      team: Team.BLACK,
+      image: `/src/assets/bn.png`,
+      id: nanoid(),
+    },
+    pos: { x: 1, y: 0 },
+  },
+  {
+    piece: {
+      type: PiecesType.BISHOP,
+      team: Team.BLACK,
+      image: `/src/assets/bb.png`,
+      id: nanoid(),
+    },
+    pos: { x: 2, y: 0 },
+  },
+  {
+    piece: {
+      type: PiecesType.QUEEN,
+      team: Team.BLACK,
+      image: `/src/assets/bq.png`,
+      id: nanoid(),
+    },
+    pos: { x: 3, y: 0 },
+  },
+  {
+    piece: {
+      type: PiecesType.KING,
+      team: Team.BLACK,
+      image: `/src/assets/bk.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+    },
+    pos: { x: 4, y: 0 },
+  },
+  {
+    piece: {
+      type: PiecesType.BISHOP,
+      team: Team.BLACK,
+      image: `/src/assets/bb.png`,
+      id: nanoid(),
+    },
+    pos: { x: 5, y: 0 },
+  },
+  {
+    piece: {
+      type: PiecesType.KNIGHT,
+      team: Team.BLACK,
+      image: `/src/assets/bn.png`,
+      id: nanoid(),
+    },
+    pos: { x: 6, y: 0 },
+  },
+  {
+    piece: {
+      type: PiecesType.ROOK,
+      team: Team.BLACK,
+      image: `/src/assets/br.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+    },
+    pos: { x: 7, y: 0 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.BLACK,
+      image: `/src/assets/bp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 0, y: 1 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.BLACK,
+      image: `/src/assets/bp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 1, y: 1 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.BLACK,
+      image: `/src/assets/bp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 2, y: 1 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.BLACK,
+      image: `/src/assets/bp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 3, y: 1 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.BLACK,
+      image: `/src/assets/bp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 4, y: 1 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.BLACK,
+      image: `/src/assets/bp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 5, y: 1 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.BLACK,
+      image: `/src/assets/bp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 6, y: 1 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.BLACK,
+      image: `/src/assets/bp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 7, y: 1 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.WHITE,
+      image: `/src/assets/wp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 0, y: 6 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.WHITE,
+      image: `/src/assets/wp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 1, y: 6 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.WHITE,
+      image: `/src/assets/wp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 2, y: 6 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.WHITE,
+      image: `/src/assets/wp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 3, y: 6 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.WHITE,
+      image: `/src/assets/wp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 4, y: 6 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.WHITE,
+      image: `/src/assets/wp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 5, y: 6 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.WHITE,
+      image: `/src/assets/wp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 6, y: 6 },
+  },
+  {
+    piece: {
+      type: PiecesType.PAWN,
+      team: Team.WHITE,
+      image: `/src/assets/wp.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+      enPassant: true,
+    },
+    pos: { x: 7, y: 6 },
+  },
+  {
+    piece: {
+      type: PiecesType.ROOK,
+      team: Team.WHITE,
+      image: `/src/assets/wr.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+    },
+    pos: { x: 0, y: 7 },
+  },
+  {
+    piece: {
+      type: PiecesType.KNIGHT,
+      team: Team.WHITE,
+      image: `/src/assets/wn.png`,
+      id: nanoid(),
+    },
+    pos: { x: 1, y: 7 },
+  },
+  {
+    piece: {
+      type: PiecesType.BISHOP,
+      team: Team.WHITE,
+      image: `/src/assets/wb.png`,
+      id: nanoid(),
+    },
+    pos: { x: 2, y: 7 },
+  },
+  {
+    piece: {
+      type: PiecesType.QUEEN,
+      team: Team.WHITE,
+      image: `/src/assets/wq.png`,
+      id: nanoid(),
+    },
+    pos: { x: 3, y: 7 },
+  },
+  {
+    piece: {
+      type: PiecesType.KING,
+      team: Team.WHITE,
+      image: `/src/assets/wk.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+    },
+    pos: { x: 4, y: 7 },
+  },
+  {
+    piece: {
+      type: PiecesType.BISHOP,
+      team: Team.WHITE,
+      image: `/src/assets/wb.png`,
+      id: nanoid(),
+    },
+    pos: { x: 5, y: 7 },
+  },
+  {
+    piece: {
+      type: PiecesType.KNIGHT,
+      team: Team.WHITE,
+      image: `/src/assets/wn.png`,
+      id: nanoid(),
+    },
+    pos: { x: 6, y: 7 },
+  },
+  {
+    piece: {
+      type: PiecesType.ROOK,
+      team: Team.WHITE,
+      image: `/src/assets/wr.png`,
+      id: nanoid(),
+      firstMoveDone: false,
+    },
+    pos: { x: 7, y: 7 },
+  },
+];

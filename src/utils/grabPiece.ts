@@ -1,4 +1,4 @@
-import { GRID_SIZE } from "../models";
+import { GRID_SIZE } from "../types/models";
 
 export const checkXLimits = (
   divLimits: DOMRect,

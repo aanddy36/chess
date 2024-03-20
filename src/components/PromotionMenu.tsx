@@ -1,17 +1,21 @@
 import { FaXmark } from "react-icons/fa6";
-import { IsValidType, MoveType, PiecesType, Team } from "../models";
-import { LegacyRef, useEffect, useRef } from "react";
+import {
+  IsValidType,
+  MoveType,
+  PiecesType,
+  Team,
+} from "../types/models";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { validateMove } from "../features/chessboardSlice";
 
-interface Props {
-  //promotionDec: LegacyRef<HTMLDivElement> | undefined;
-}
-
-export const PromotionMenu = (/* { promotionDec }: Props */) => {
+export const PromotionMenu = () => {
   const { moveStatus, lastSquare } = useSelector(
     (store: RootState) => store.chess
+  );
+  const { GRID_SIZE } = useSelector(
+    (store: RootState) => store.settings
   );
   const dispatch = useDispatch();
   const promotionDec = useRef<HTMLDivElement | null>(null);
@@ -20,7 +24,9 @@ export const PromotionMenu = (/* { promotionDec }: Props */) => {
     const { isValid, changeTeam } = moveStatus;
     if (isValid === IsValidType.IN_PROCESS) {
       if (promotionDec.current && lastSquare) {
-        promotionDec.current.style.left = `${lastSquare.gridPosition.x * 64}px`;
+        promotionDec.current.style.left = `${
+          lastSquare.gridPosition.x * GRID_SIZE
+        }px`;
         promotionDec.current.style.visibility = "visible";
         changeTeam === Team.BLACK
           ? (promotionDec.current.style.bottom = "0px")
@@ -50,19 +56,19 @@ export const PromotionMenu = (/* { promotionDec }: Props */) => {
       ></div>
       <div
         ref={promotionDec}
-        className={`border absolute z-[2] bg-white rounded-md flex w-16 overflow-hidden 
-            shadow-md shadow-black/50 invisible ${
-              moveStatus.changeTeam === Team.BLACK
-                ? "flex-col-reverse"
-                : "flex-col"
-            }`}
+        className={`border absolute z-[2] bg-white rounded-md flex
+        overflow-hidden shadow-md shadow-black/50 invisible ${
+          moveStatus.changeTeam === Team.BLACK ? "flex-col-reverse" : "flex-col"
+        }`}
+        style={{ width: `${GRID_SIZE}px` }}
       >
         <label
-          className=" w-16 h-16 bg-cover cursor-pointer transition duration-200
-           hover:bg-gray-200 relative"
+          className="bg-cover cursor-pointer transition duration-200 hover:bg-gray-200 relative"
           htmlFor={PiecesType.QUEEN}
           style={{
             backgroundImage: `url('/src/assets/${moveStatus.changeTeam}q.png')`,
+            height: `${GRID_SIZE}px`,
+            width: `${GRID_SIZE}px`,
           }}
         >
           <input
@@ -75,11 +81,12 @@ export const PromotionMenu = (/* { promotionDec }: Props */) => {
           />
         </label>
         <label
-          className="w-16 h-16 bg-cover cursor-pointer transition duration-200
-           hover:bg-gray-200 relative"
+          className="bg-cover cursor-pointer transition duration-200 hover:bg-gray-200 relative"
           htmlFor={PiecesType.KNIGHT}
           style={{
             backgroundImage: `url('/src/assets/${moveStatus.changeTeam}n.png')`,
+            height: `${GRID_SIZE}px`,
+            width: `${GRID_SIZE}px`,
           }}
         >
           <input
@@ -92,11 +99,12 @@ export const PromotionMenu = (/* { promotionDec }: Props */) => {
           />
         </label>
         <label
-          className="w-16 h-16 bg-cover cursor-pointer transition duration-200
-           hover:bg-gray-200 relative"
+          className="bg-cover cursor-pointer transition duration-200 hover:bg-gray-200 relative"
           htmlFor={PiecesType.ROOK}
           style={{
             backgroundImage: `url('/src/assets/${moveStatus.changeTeam}r.png')`,
+            height: `${GRID_SIZE}px`,
+            width: `${GRID_SIZE}px`,
           }}
         >
           <input
@@ -109,11 +117,12 @@ export const PromotionMenu = (/* { promotionDec }: Props */) => {
           />
         </label>
         <label
-          className="w-16 h-16 bg-cover cursor-pointer transition duration-200
-           hover:bg-gray-200 relative"
+          className="bg-cover cursor-pointer transition duration-200 hover:bg-gray-200 relative"
           htmlFor={PiecesType.BISHOP}
           style={{
             backgroundImage: `url('/src/assets/${moveStatus.changeTeam}b.png')`,
+            height: `${GRID_SIZE}px`,
+            width: `${GRID_SIZE}px`,
           }}
         >
           <input

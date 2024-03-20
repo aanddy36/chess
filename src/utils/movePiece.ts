@@ -1,9 +1,5 @@
-import { King } from "../classes/King";
-import { Pawn } from "../classes/Pawn";
-import { Piece } from "../classes/Piece";
-import { Rook } from "../classes/Rook";
-import { Square } from "../classes/Square";
-import { ChangeProp, PiecesType, Team } from "../models";
+import { nanoid } from "nanoid";
+import { ChangeProp, PieceType, PiecesType, SquareType, Team } from "../types/models";
 
 interface ChangeObj {
   prop: ChangeProp[] | undefined;
@@ -11,83 +7,78 @@ interface ChangeObj {
   capturedInPassant: string | undefined;
   pieceToPromote: PiecesType | undefined;
   rookChange?: {
-    firstSq: Square;
-    lastSq: Square;
+    firstSq: SquareType;
+    lastSq: SquareType;
   };
 }
 
 export function movePiece(
-  firstSquare: Square,
-  lastSquare: Square,
-  array: Square[],
+  firstSquare: SquareType,
+  lastSquare: SquareType,
+  array: SquareType[],
   changeObj: ChangeObj
 ) {
   let newArray = array.map((square) => {
-    const { squareId, chessPosition, color, gridPosition } = square;
+    const { squareId } = square;
     //REMOVE A PIECE FROM A SQUARE
     if (
       squareId === firstSquare.squareId ||
       squareId === changeObj.capturedInPassant ||
       squareId === changeObj.rookChange?.firstSq.squareId
     ) {
-      return new Square(chessPosition, color, gridPosition);
+      return {
+        ...square,
+        piece: null,
+      };
     }
 
     if (squareId === lastSquare.squareId) {
       //CHANGE THE PIECE TO THE PROMOTED ONE
-      let newPiece;
+      let newPiece = {} as PieceType;
 
       if (changeObj.pieceToPromote && firstSquare.piece) {
         //CREATE A PIECE OR A ROOK WITH FIRST MOVE DONE
-        newPiece =
-          changeObj.pieceToPromote !== PiecesType.ROOK
-            ? new Piece(changeObj.pieceToPromote, firstSquare.piece.team)
-            : new Rook(firstSquare.piece.team, true);
+        newPiece = {
+          type: changeObj.pieceToPromote,
+          team: firstSquare.piece.team,
+          image: `/src/assets/${firstSquare.piece.team}${changeObj.pieceToPromote}.png`,
+          id: nanoid(),
+          firstMoveDone: changeObj.pieceToPromote === PiecesType.ROOK && true,
+        };
       } else {
-        switch (firstSquare.piece?.type) {
-          case PiecesType.PAWN:
-            newPiece = new Pawn(firstSquare.piece.team);
-            break;
-          case PiecesType.ROOK:
-            newPiece = new Rook(firstSquare.piece.team);
-            break;
-          case PiecesType.KING:
-            newPiece = new King(firstSquare.piece.team);
-            break;
-          default:
-            newPiece = new Piece(
-              firstSquare.piece?.type as PiecesType,
-              firstSquare.piece?.team as Team
-            );
-
-            break;
-        }
+        newPiece = { ...(firstSquare.piece as PieceType) };
         //CHANGE PAWN PROPERTY WHEN IS MOVED FOR THE FIRST TIME
         if (
           changeObj.prop?.includes(ChangeProp.FIRST_M) ||
-          (firstSquare.piece as Pawn).firstMoveDone === true
+          firstSquare.piece?.firstMoveDone === true
         ) {
-          (newPiece as Pawn | Rook | King).firstMoveDone = true;
+          newPiece.firstMoveDone = true;
         }
         //CHANGE PAWN PROPERTY TO NOT PASSANTABLE ANYMORE
         if (
           (newPiece?.type === PiecesType.PAWN &&
             changeObj.prop?.includes(ChangeProp.PAWN_EN_PASSANT)) ||
-          (firstSquare.piece as Pawn).enPassant === false
+          firstSquare.piece?.enPassant === false
         ) {
-          (newPiece as Pawn).enPassant = false;
+          newPiece.enPassant = false;
         }
       }
 
       //WE RETURN THE SQUARE WITH THE UPDATED PIECE
-      return new Square(chessPosition, color, gridPosition, newPiece);
+      return { ...square, piece: newPiece };
     }
     if (squareId === changeObj.rookChange?.lastSq.squareId) {
-      let newPiece = new Rook(firstSquare.piece?.team as Team, true);
-      return new Square(chessPosition, color, gridPosition, newPiece);
+      let newPiece = {
+        type: PiecesType.ROOK,
+        team: firstSquare.piece?.team as Team,
+        image: `/src/assets/${firstSquare.piece?.team as Team}r.png`,
+        id: nanoid(),
+        firstMoveDone: true,
+      };
+      return { ...square, piece: newPiece };
     }
     //IF NOTHING CHANGED, RETURN THAT SQUARE UNTOUCHED
-    return square;
+    return { ...square };
   });
   return newArray;
 }

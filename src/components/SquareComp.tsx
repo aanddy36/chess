@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Square } from "../classes/Square";
-import { SquareColor } from "../models";
+import { SquareColor, SquareType } from "../types/models";
 import { RootState } from "../store";
 import {
   activeMouse,
@@ -8,119 +7,93 @@ import {
   assignLastSq,
   changeCursorPos,
 } from "../features/chessboardSlice";
+import { RowsTag } from "./RowsTag";
+import { ColsTag } from "./ColsTag";
 
 interface Props {
-  square: Square;
+  square: SquareType;
   grabbedOne: React.MutableRefObject<HTMLDivElement | null>;
-  hoveredSquare: string | null;
-  setHoveredSquare: (arg: string | null) => void;
 }
 
-export const SquareComp = ({
-  square,
-  grabbedOne,
-  hoveredSquare,
-  setHoveredSquare,
-}: Props) => {
+export const SquareComp = ({ square, grabbedOne }: Props) => {
   const { squareId } = square;
   const { firstSquare, lastMoveIDs, board } = useSelector(
     (store: RootState) => store.chess
   );
+  const { GRID_SIZE } = useSelector((store: RootState) => store.settings);
   const dispatch = useDispatch();
 
   const handleMouseDown = (e: MouseEvent) => {
     let temp = e.target as HTMLDivElement;
     const selectedSquare = board.find((square) => square.squareId === temp.id);
-    
+
     if (temp.dataset.piece) {
-      console.log(selectedSquare);
       grabbedOne.current = temp;
       dispatch(activeMouse(true));
-      dispatch(assignFirstSq(selectedSquare as Square));
+      dispatch(assignFirstSq(selectedSquare as SquareType));
     }
   };
 
-  const handleMouseUp = (e: MouseEvent) => {
-    setHoveredSquare(null);
-    const elements = document.elementsFromPoint(e.clientX, e.clientY);
+  const handleMouseUp = (e: any, isMouse: boolean) => {
+    let elements;
+    if (isMouse) {
+      elements = document.elementsFromPoint(e.clientX, e.clientY);
+    } else {
+      var { clientX, clientY } = e.changedTouches[0];
+      elements = document.elementsFromPoint(clientX, clientY);
+    }
     const temp = elements.find((el) => el.classList.contains("square"));
     const selectedSquare = board.find((square) => square.squareId === temp?.id);
 
     if (grabbedOne.current) {
       if (selectedSquare) {
-        dispatch(assignLastSq(selectedSquare as Square));
-        //setLastSquare(selectedSquare as Square);
+        dispatch(assignLastSq(selectedSquare as SquareType));
       } else {
         grabbedOne.current.style.position = `static`;
         grabbedOne.current = null;
       }
       dispatch(activeMouse(false));
       dispatch(changeCursorPos(null));
-      //setMouseActive(false);
-      //setCursorPos(initialState.cursorPos);
     }
   };
 
   return (
     <div
-      className={`w-16 h-16 font-semibold square ${
+      className={`font-semibold square ${
         square.color === SquareColor.WHITE
           ? squareId === firstSquare?.squareId ||
             squareId === lastMoveIDs.first ||
             squareId === lastMoveIDs.last
-            ? "bg-whiteSelected border-whiteSelected"
-            : "bg-whiteSquare border-whiteSquare"
+            ? "bg-whiteSelected"
+            : "bg-whiteSquare"
           : squareId === firstSquare?.squareId ||
             squareId === lastMoveIDs.first ||
             squareId === lastMoveIDs.last
-          ? "bg-greenSelected border-greenSelected"
-          : "bg-greenSquare border-greenSquare"
-      }  ${
-        hoveredSquare === squareId &&
-        square.color === SquareColor.WHITE &&
-        " border-white"
-      } ${
-        hoveredSquare === squareId &&
-        square.color === SquareColor.GREEN &&
-        " border-[#cecece]"
-      }`}
+          ? "bg-greenSelected"
+          : "bg-greenSquare"
+      }   `}
+      style={{ height: `${GRID_SIZE}px`, width: `${GRID_SIZE}px` }}
       key={squareId}
       id={squareId}
       onMouseDown={(e) => handleMouseDown(e as any)}
-      onMouseUp={(e) => handleMouseUp(e as any)}
+      onMouseUp={(e) => handleMouseUp(e as any, true)}
+      onTouchStart={(e) => handleMouseDown(e as any)}
+      onTouchEnd={(e) => handleMouseUp(e as any, false)}
     >
       {square.piece && (
         <div
-          className="w-16 h-16 bg-cover cursor-grab active:cursor-grabbing z-[1]"
+          className={`bg-cover cursor-grab active:cursor-grabbing z-[1]`}
           id={squareId}
           data-piece
-          style={{ backgroundImage: `url('${square.piece.image}')` }}
+          style={{
+            backgroundImage: `url('${square.piece.image}')`,
+            height: `${GRID_SIZE}px`,
+            width: `${GRID_SIZE}px`,
+          }}
         ></div>
       )}
-      {square.gridPosition.y === 7 && (
-        <span
-          className={` absolute bottom-[1px] ${
-            square.color === SquareColor.GREEN
-              ? "text-whiteSquare"
-              : "text-greenSquare"
-          }`}
-          style={{ left: `${square.gridPosition.x * 64 + 52}px` }}
-        >
-          {square.chessPosition.x}
-        </span>
-      )}
-      {square.gridPosition.x === 0 && (
-        <span
-          className={`absolute left-1 ${
-            square.color === SquareColor.GREEN
-              ? "text-whiteSquare"
-              : "text-greenSquare"
-          }`}
-          style={{ top: `${square.gridPosition.y * 64}px` }}
-        >
-          {square.chessPosition.y}
-        </span>
-      )}
+      {square.gridPosition.y === 7 && <ColsTag square={square} />}
+      {square.gridPosition.x === 0 && <RowsTag square={square} />}
     </div>
   );
 };

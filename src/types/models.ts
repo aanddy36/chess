@@ -1,8 +1,6 @@
-import { Square } from "./classes/Square";
-
 export const newCols = [1, 2, 3, 4, 5, 6, 7, 8];
 export const newRows = ["a", "b", "c", "d", "e", "f", "g", "h"];
-export const GRID_SIZE = 64;
+export const GRID_SIZE = 64;//75
 export enum SquareColor {
   GREEN,
   WHITE,
@@ -60,10 +58,10 @@ export interface Validness {
   changeTeam?: Team;
   pieceToPromote?: PiecesType;
   capturedInPassant?: string;
-  uptBoard?: Square[];
+  uptBoard?: SquareType[];
   rookChange?: {
-    firstSq: Square;
-    lastSq: Square;
+    firstSq: SquareType;
+    lastSq: SquareType;
   };
 }
 
@@ -81,3 +79,26 @@ export const initialState: {
     last: null,
   },
 };
+
+export interface ChessCoord {
+  x: string;
+  y: number;
+}
+
+export interface SquareType {
+  chessPosition: ChessCoord;
+  color: SquareColor;
+  gridPosition: Coord;
+  piece: PieceType | null;
+  inDanger: Team[];
+  squareId: string;
+}
+
+export interface PieceType {
+  type: PiecesType;
+  team: Team;
+  image: string;
+  id: string;
+  firstMoveDone?: boolean;
+  enPassant?: boolean;
+}

@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { checkXLimits, checkYLimits } from "./utils/grabPiece";
 import { SquareComp } from "./components/SquareComp";
 import { isValidMove } from "./utils/isValidMove";
-import { IsValidType } from "./models";
+import { IsValidType } from "./types/models";
 import { PromotionMenu } from "./components/PromotionMenu";
-import { FaAngleDown, FaRegClock } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import {
@@ -12,14 +11,20 @@ import {
   createBoard,
   validateMove,
 } from "./features/chessboardSlice";
+import { GameSettings } from "./components/GameSettings";
+import { FullSizeTurns } from "./components/FullSizeTurns";
+import { clockCaster } from "./utils/clockCaster";
+import { adjustSize } from "./features/settingsSlice";
 
 function App() {
   const grabbedOne = useRef<HTMLDivElement | null>(null);
   const boardRef = useRef<HTMLDivElement | null>(null);
-  const [hoveredSquare, setHoveredSquare] = useState<string | null>(null);
 
   const { board, firstSquare, lastSquare, cursorPos, mouseActive, moveStatus } =
     useSelector((store: RootState) => store.chess);
+  const { duration, GRID_SIZE } = useSelector(
+    (store: RootState) => store.settings
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -68,14 +73,6 @@ function App() {
     const watchCursor = (e: any) => {
       const { offsetTop, offsetLeft } = boardRef.current as HTMLDivElement;
       if (mouseActive) {
-        const elements = document.elementsFromPoint(e.clientX, e.clientY);
-        const temp = elements.find((el) => el.classList.contains("square"));
-        const selectedSquare = board.find(
-          (square) => square.squareId === temp?.id
-        );
-        if (hoveredSquare !== selectedSquare?.squareId && selectedSquare) {
-          setHoveredSquare(selectedSquare?.squareId);
-        }
         dispatch(
           changeCursorPos({
             x: e.clientX - offsetLeft,
@@ -90,51 +87,71 @@ function App() {
     };
   }, [mouseActive]);
 
+  useEffect(() => {
+    const watchCursor = (e: TouchEvent) => {
+      const { offsetTop, offsetLeft } = boardRef.current as HTMLDivElement;
+      if (mouseActive) {
+        e.preventDefault();
+        var { clientX, clientY } = e.touches[0];
+        dispatch(
+          changeCursorPos({
+            x: clientX - offsetLeft,
+            y: clientY - offsetTop,
+          })
+        );
+      }
+    };
+    document.addEventListener("touchmove", watchCursor, { passive: false });
+    return () => {
+      document.removeEventListener("touchmove", watchCursor);
+    };
+  }, [mouseActive]);
+
+  useEffect(() => {
+    const adjustGridSize = () => {
+      if (window.innerWidth > 1050 && GRID_SIZE !== 75) {
+        return dispatch(adjustSize(75));
+      } else if (
+        window.innerWidth < 1050 &&
+        window.innerWidth >= 570 &&
+        GRID_SIZE !== 64
+      ) {
+        return dispatch(adjustSize(64));
+      } else if (window.innerWidth < 570) {
+        return dispatch(adjustSize(window.innerWidth * 0.10256 + 5.5));
+      }
+    };
+    window.addEventListener("resize", adjustGridSize);
+    return () => {
+      window.removeEventListener("resize", adjustGridSize);
+    };
+  }, [GRID_SIZE]);
+
   return (
     <main
-      className=" bg-bg w-screen h-screen flex items-center justify-center gap-8
-       flex-col"
+      className=" bg-bg min-h-screen flex flex-col items-center justify-between pt-4 laptop:pt-0
+    laptop:px-4 semi:justify-center semi:gap-12 laptop:flex-row gap-12 laptop:gap-3"
     >
-      <h1 className=" text-white font-extrabold text-5xl">playChess</h1>
-      <section className=" flex items-center justify-center gap-12">
-        <section className="h-[512px] flex flex-col justify-between gap-6">
-          <div className=" h-full flex flex-col justify-between">
-            <div className="flex flex-col gap-2 items-center">
-              <img
-                src="/src/assets/black_user.png"
-                className=" w-24 rounded-md"
-              />
-              <h4 className=" text-white font-medium">Black</h4>
-            </div>
-            <button
-              disabled
-              className="text-white text-2xl font-semibold tracking-wider bg-blackBtn
-            w-full py-1 rounded-md border-b-[5px] border-greenBorder opacity-50"
-            >
-              10:00
-            </button>
-          </div>
-          <div className=" h-full flex flex-col-reverse justify-between">
-            <div className="flex flex-col gap-2 items-center">
-              <h4 className=" text-white font-medium">White</h4>
-              <img
-                src="/src/assets/white_user.png"
-                className=" w-24 rounded-md"
-              />
-            </div>
-            <button
-              disabled
-              className="text-blackBtn text-2xl font-semibold tracking-wider bg-white 
-            w-full py-1 rounded-md border-t-[5px] border-greenBorder opacity-50"
-            >
-              10:00
-            </button>
-          </div>
-        </section>
+      <FullSizeTurns />
 
+      <section className=" flex flex-col h-full justify-center gap-3">
+        <div className=" flex justify-between full:hidden">
+          <div className=" flex items-start gap-3">
+            <img src="/src/assets/black_user.png" className=" w-10" />
+            <h4 className=" text-white font-medium">Black</h4>
+          </div>
+          <button
+            disabled
+            className="text-white text-2xl font-semibold tracking-wider bg-blackBtn
+            rounded-md opacity-50 h-full px-4"
+          >
+            {clockCaster(duration)}
+          </button>
+        </div>
         <div
-          className=" w-[512px] h-[512px] flex flex-wrap rounded-md relative overflow-hidden"
+          className="grid grid-cols-8 rounded-md relative overflow-hidden"
           ref={boardRef}
+          style={{ height: `${GRID_SIZE * 8}px`, width: `${GRID_SIZE * 8}px` }}
         >
           {board.map((square) => {
             return (
@@ -142,34 +159,27 @@ function App() {
                 key={square.squareId}
                 square={square}
                 grabbedOne={grabbedOne}
-                hoveredSquare={hoveredSquare}
-                setHoveredSquare={setHoveredSquare}
               />
             );
           })}
           {moveStatus.isValid === IsValidType.IN_PROCESS && <PromotionMenu />}
         </div>
-
-        <div className=" flex flex-col w-32 gap-4">
+        <div className=" flex justify-between full:hidden">
+          <div className=" flex items-start gap-3">
+            <img src="/src/assets/white_user.png" className=" w-10" />
+            <h4 className=" text-white font-medium">White</h4>
+          </div>
           <button
-            className=" text-white font-medium bg-timerBtn py-2 rounded-md justify-between
-           duration-200 transition-colors hover:bg-timerHover flex items-center pr-2 pl-4"
+            disabled
+            className="text-blackBtn text-2xl font-semibold tracking-wider bg-white 
+            rounded-md opacity-50 h-full px-4"
           >
-            <div className=" flex items-center gap-2">
-              <FaRegClock className=" text-greenBorder" />
-              10 min
-            </div>
-            <FaAngleDown />
-          </button>
-          <button
-            className=" bg-greenBorder text-white text-xl font-bold rounded-md
-           py-[6px] border-b-[5px] border-greenSquare transition-color duration-200
-            hover:bg-greenHover"
-          >
-            Jugar
+            {clockCaster(duration)}
           </button>
         </div>
       </section>
+
+      <GameSettings />
     </main>
   );
 }

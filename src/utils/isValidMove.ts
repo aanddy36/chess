@@ -1,17 +1,26 @@
-import { King } from "../classes/King";
-import { Pawn } from "../classes/Pawn";
-import { Piece } from "../classes/Piece";
-import { Rook } from "../classes/Rook";
-import { Square } from "../classes/Square";
-import { IsValidType, MoveType, PiecesType, Team, Validness } from "../models";
-import { crossedSquares } from "./crossedSquares";
+import {
+  IsValidType,
+  MoveType,
+  PiecesType,
+  SquareType,
+  Team,
+  Validness,
+} from "../types/models";
+import { crossedSquares, otherTeam } from "./coordCalculus";
+
 import { movePiece } from "./movePiece";
 import { uptDangerZones } from "./uptDangerZones";
+import { validBishopMove } from "./validMove/bishop";
+import { validKingMove } from "./validMove/king";
+import { validKnightMove } from "./validMove/knight";
+import { validPawnMove } from "./validMove/pawn";
+import { validQueenMove } from "./validMove/queen";
+import { validRookMove } from "./validMove/rook";
 
 export const isValidMove = (
-  board: Square[],
-  firstSquare: Square,
-  lastSquare: Square
+  board: SquareType[],
+  firstSquare: SquareType,
+  lastSquare: SquareType
 ): Validness => {
   const { piece: firstPiece } = firstSquare;
   const { piece: lastPiece } = lastSquare;
@@ -31,27 +40,33 @@ export const isValidMove = (
     }
     switch (firstPiece?.type) {
       case PiecesType.PAWN:
-        ans = Pawn.validPawnMove(firstSquare, lastSquare, board);
+        ans = validPawnMove(firstSquare, lastSquare, board);
         break;
       case PiecesType.QUEEN:
-        ans = Piece.validQueenMove(firstSquare, lastSquare);
+        ans = validQueenMove(firstSquare, lastSquare);
         break;
       case PiecesType.BISHOP:
-        ans = Piece.validBishopMove(firstSquare, lastSquare);
+        ans = validBishopMove(firstSquare, lastSquare);
         break;
       case PiecesType.ROOK:
-        ans = Rook.validRookMove(firstSquare, lastSquare);
+        ans = validRookMove(firstSquare, lastSquare);
         break;
       case PiecesType.KING:
-        ans = King.validKingMove(firstSquare, lastSquare, board);
+        ans = validKingMove(firstSquare, lastSquare, board);
         break;
     }
   } else {
-    ans = Piece.validKnightMove(firstSquare, lastSquare);
+    ans = validKnightMove(firstSquare, lastSquare);
   }
-  let uptBoard = [] as Square[];
+  let uptBoard = [] as SquareType[];
   if (ans.isValid === IsValidType.YES) {
-    const { changeProp, changeTeam, capturedInPassant, pieceToPromote, rookChange } = ans;
+    const {
+      changeProp,
+      changeTeam,
+      capturedInPassant,
+      pieceToPromote,
+      rookChange,
+    } = ans;
     const temp = [...board];
 
     let newBoard = movePiece(firstSquare, lastSquare, temp, {
@@ -59,15 +74,15 @@ export const isValidMove = (
       changeTeam,
       capturedInPassant,
       pieceToPromote,
-      rookChange
+      rookChange,
     });
     uptBoard = uptDangerZones(newBoard);
     let kings = uptBoard.filter((sq) => sq.piece?.type === PiecesType.KING);
     let allyKing = kings.filter((sq) => sq.piece?.team === firstPiece?.team)[0];
     let enemyKing = kings.filter(
-      (sq) => sq.piece?.team === Piece.otherTeam(firstPiece?.team)
+      (sq) => sq.piece?.team === otherTeam(firstPiece?.team)
     )[0];
-    if (allyKing.inDanger.includes(Piece.otherTeam(firstPiece?.team))) {
+    if (allyKing.inDanger.includes(otherTeam(firstPiece?.team))) {
       return { isValid: IsValidType.NO };
     }
     if (enemyKing.inDanger.includes(firstPiece?.team as Team)) {

@@ -1,26 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Square } from "../classes/Square";
+//import { Square } from "../classes/Square";
 import {
   Coord,
   IsValidType,
   MoveType,
   PiecesType,
   SquareColor,
+  SquareType,
   Validness,
   newCols,
   newRows,
-} from "../models";
+} from "../types/models";
 import { uptDangerZones } from "../utils/uptDangerZones";
-import { initalPieces } from "../initialPieces";
+import { startingPieces } from "../initialPieces";
 import { movePiece } from "../utils/movePiece";
 import { arraySounds } from "../utils/playSounds";
 
 interface Props {
-  board: Square[];
-  firstSquare: Square | null;
-  lastSquare: Square | null;
+  board: SquareType[];
+  firstSquare: SquareType | null;
+  lastSquare: SquareType | null;
   moveStatus: Validness;
-  lastMoveIDs: { first: string | null; last: string | null };
+  lastMoveIDs: { first: string | undefined; last: string | undefined };
   mouseActive: boolean;
   cursorPos: Coord | null;
 }
@@ -32,7 +33,7 @@ const initialState: Props = {
   moveStatus: {
     isValid: IsValidType.NULL,
   },
-  lastMoveIDs: { first: null, last: null },
+  lastMoveIDs: { first: undefined, last: undefined },
   mouseActive: false,
   cursorPos: null,
 };
@@ -51,37 +52,36 @@ const chessboardSlice = createSlice({
               ? SquareColor.GREEN
               : SquareColor.WHITE;
 
-          const piece = initalPieces.find(
+          const piece = startingPieces.find(
             (pie) => pie.pos.x === gridX && pie.pos.y === gridY
           );
-          state.board.push(
-            new Square(
-              { x: newRows[j], y: i + 1 },
-              color,
-              { x: gridX, y: gridY },
-              piece?.piece
-            )
-          );
+          state.board.push({
+            chessPosition: { x: newRows[j], y: i + 1 },
+            color,
+            gridPosition: { x: gridX, y: gridY },
+            piece: piece ? piece.piece : null,
+            inDanger: [],
+            squareId: `${newRows[j]}${i + 1}`,
+          });
           gridX += 1;
         }
         gridY += 1;
       }
-      state.board = uptDangerZones([...state.board]);
+
+      state.board = uptDangerZones(state.board);
     },
     validateMove: (state, { payload }: { payload: Validness }) => {
       const { firstSquare, lastSquare, board } = state;
       if (payload.isValid === IsValidType.YES) {
-        console.log({...payload});
-        
+
         let { uptBoard } = payload;
         if (!uptBoard) {
           const { changeProp, changeTeam, capturedInPassant, pieceToPromote } =
             payload;
-          let temp = [...board];
           let newBoard = movePiece(
-            firstSquare as Square,
-            lastSquare as Square,
-            temp,
+            firstSquare as SquareType,
+            lastSquare as SquareType,
+            board,
             {
               prop: changeProp,
               changeTeam,
@@ -93,8 +93,8 @@ const chessboardSlice = createSlice({
         }
         state.board = uptBoard;
         state.lastMoveIDs = {
-          first: (firstSquare as Square).squareId,
-          last: (lastSquare as Square).squareId,
+          first: firstSquare?.squareId,
+          last: lastSquare?.squareId,
         };
         payload.moveType !== undefined && arraySounds[payload.moveType]();
       }
@@ -107,10 +107,10 @@ const chessboardSlice = createSlice({
       }
       state.moveStatus = payload;
     },
-    assignFirstSq: (state, { payload }: { payload: Square | null }) => {
+    assignFirstSq: (state, { payload }: { payload: SquareType | null }) => {
       state.firstSquare = payload;
     },
-    assignLastSq: (state, { payload }: { payload: Square | null }) => {
+    assignLastSq: (state, { payload }: { payload: SquareType | null }) => {
       state.lastSquare = payload;
     },
     selectPromPiece: (state, { payload }: { payload: PiecesType }) => {

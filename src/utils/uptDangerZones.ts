@@ -1,7 +1,8 @@
-import { InDanger, Square } from "../classes/Square";
+import { InDanger } from "../classes/Square";
+import { SquareType } from "../types/models";
 import { evaluateFdz } from "./futureDangerZones";
 
-export function uptDangerZones(board: Square[]) {
+export function uptDangerZones(board: SquareType[]) {
   let dangeredSqrs = board.map((sqr) => {
     const { piece } = sqr;
     if (piece) {
@@ -22,12 +23,12 @@ export function uptDangerZones(board: Square[]) {
         .map((item: any) => JSON.stringify(item))
     ),
   ].map((item: any) => JSON.parse(item));
-  
+
   const newBoard = board.map((b) => {
     const filt = (dangeredSqrs as InDanger[]).filter(
       (c: InDanger) => c.id === b.squareId
-    );    
-    b.inDanger = []
+    );
+    b.inDanger = [];
     for (let a of filt) {
       b.inDanger.push(a.team);
     }

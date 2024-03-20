@@ -1,10 +1,10 @@
-import { Square } from "../classes/Square";
-import { Coord, PiecesType, Team } from "../models";
+import { Coord, PiecesType, SquareType, Team } from "../types/models";
+import { convertToChessGrid } from "./coordCalculus";
 
 export function fdzPawn(
   upOrDown: number,
-  lastSquare: Square,
-  firstSquare: Square
+  lastSquare: SquareType,
+  firstSquare: SquareType
 ) {
   const aheadY =
     upOrDown === 1
@@ -13,7 +13,7 @@ export function fdzPawn(
   const dangerArray = [];
   if (lastSquare.gridPosition.x - 1 >= 0) {
     const newSq = {
-      id: Square.convertToChessGrid({
+      id: convertToChessGrid({
         x: lastSquare.gridPosition.x - 1,
         y: aheadY,
       }),
@@ -23,7 +23,7 @@ export function fdzPawn(
   }
   if (lastSquare.gridPosition.x + 1 <= 7) {
     const newSq = {
-      id: Square.convertToChessGrid({
+      id: convertToChessGrid({
         x: lastSquare.gridPosition.x + 1,
         y: aheadY,
       }),
@@ -34,7 +34,7 @@ export function fdzPawn(
   return dangerArray;
 }
 
-export function fdzKnight(lastSquare: Square, firstSquare: Square) {
+export function fdzKnight(lastSquare: SquareType, firstSquare: SquareType) {
   const possiblePairs =
     firstSquare.piece?.type === PiecesType.KNIGHT
       ? [
@@ -65,7 +65,7 @@ export function fdzKnight(lastSquare: Square, firstSquare: Square) {
       continue;
     }
     const newSq = {
-      id: Square.convertToChessGrid({ x: newX, y: newY }),
+      id: convertToChessGrid({ x: newX, y: newY }),
       team: firstSquare.piece?.team,
     };
     dangerArray.push(newSq);
@@ -74,9 +74,9 @@ export function fdzKnight(lastSquare: Square, firstSquare: Square) {
 }
 
 export function fdzRook(
-  lastSquare: Square,
-  board: Square[],
-  firstSquare: Square
+  lastSquare: SquareType,
+  board: SquareType[],
+  firstSquare: SquareType
 ) {
   const { x, y } = lastSquare.gridPosition;
   let possiblePairs = [] as Coord[];
@@ -119,10 +119,10 @@ export function fdzRook(
       if (newY < 0 || newY > 7 || newX < 0 || newX > 7) {
         break;
       }
-      const newId = Square.convertToChessGrid({ x: newX, y: newY });
+      const newId = convertToChessGrid({ x: newX, y: newY });
       const newDanger = board.filter((sq) => sq.squareId === newId)[0];
       const newSq = {
-        id: Square.convertToChessGrid(newDanger.gridPosition),
+        id: convertToChessGrid(newDanger.gridPosition),
         team: firstSquare.piece?.team,
       };
       dangerArray.push(newSq);
@@ -140,9 +140,9 @@ export function evaluateFdz({
   board,
 }: {
   type: PiecesType;
-  lastSquare: Square;
-  firstSquare: Square;
-  board: Square[];
+  lastSquare: SquareType;
+  firstSquare: SquareType;
+  board: SquareType[];
 }) {
   switch (type) {
     case PiecesType.PAWN:
