@@ -79,7 +79,9 @@ export function Board({
           <img
             src="/src/assets/black_user.png"
             className={`w-10 border-2 ${
-              turn === Team.BLACK && gameStarted ? "border-[#f3f04b]" : "border-transparent"
+              turn === Team.BLACK && gameStarted
+                ? "border-[#f3f04b]"
+                : "border-transparent"
             }`}
           />
           <h4 className=" text-white font-medium">Black</h4>
@@ -100,7 +102,11 @@ export function Board({
         style={{ height: `${GRID_SIZE * 8}px`, width: `${GRID_SIZE * 8}px` }}
       >
         {!gameStarted && (
-          <div className=" absolute inset-0 bg-black/30 z-[1]"></div>
+          <div className=" absolute inset-0 bg-black/50 z-[1] grid place-content-center">
+            <h2 className="text-white text-4xl tablet:text-5xl font-bold">
+              Press Play to start!
+            </h2>
+          </div>
         )}
         {board.map((square) => {
           return (
@@ -118,7 +124,9 @@ export function Board({
           <img
             src="/src/assets/white_user.png"
             className={`w-10 border-2 ${
-              turn === Team.WHITE && gameStarted ? "border-[#f3f04b]" : "border-transparent"
+              turn === Team.WHITE && gameStarted
+                ? "border-[#f3f04b]"
+                : "border-transparent"
             }`}
           />
           <h4 className=" text-white font-medium">White</h4>

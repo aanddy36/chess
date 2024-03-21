@@ -50,7 +50,7 @@ export const FullSizeTurns = () => {
         </div>
         <button
           disabled
-          className={`text-blackBtn text-2xl font-semibold tracking-wider bg-white 
+          className={`text-black text-2xl font-semibold tracking-wider bg-white 
             w-[126px] py-1 rounded-md border-t-[5px] border-greenBorder ${
               turn === Team.WHITE && gameStarted
                 ? " opacity-100"

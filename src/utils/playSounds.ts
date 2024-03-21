@@ -18,4 +18,12 @@ export function castle() {
   const capture = new Audio("/src/assets/castle.mp3");
   capture.play();
 }
-export const arraySounds = [moveDone, capturePiece, promotion, check, castle];
+export function start() {
+  const capture = new Audio("/src/assets/game-start.mp3");
+  capture.play();
+}
+export function end() {
+  const capture = new Audio("/src/assets/game-end.mp3");
+  capture.play();
+}
+export const arraySounds = [moveDone, capturePiece, promotion, check, castle, start, end];

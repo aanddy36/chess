@@ -5,9 +5,11 @@ import {
   Modes,
   SettingId,
   SingleMode,
+  WReason,
   gameModes,
 } from "../types/settingsTypes";
 import { Team } from "../types/models";
+import { end } from "../utils/playSounds";
 
 interface Props {
   mode: Modes;
@@ -20,7 +22,7 @@ interface Props {
   GRID_SIZE: number;
   gameStarted: boolean;
   turn: Team;
-  winner: Team | null;
+  winner: { team: Team; reason: WReason } | null;
   isSurrendering: boolean;
 }
 
@@ -40,7 +42,7 @@ const initialState: Props = {
       : window.innerWidth * 0.10256 + 5.5,
   gameStarted: false,
   turn: Team.WHITE,
-  winner: null,
+  winner: null /* { team: Team.BLACK, reason: WReason.ABANDONMENT } */,
   isSurrendering: false,
 };
 
@@ -78,6 +80,13 @@ const settingsSlice = createSlice({
     confirmSurrender: (state, { payload }: { payload: boolean }) => {
       state.isSurrendering = payload;
     },
+    endGame: (
+      state,
+      { payload }: { payload: { team: Team; reason: WReason } }
+    ) => {
+      end();
+      state.winner = payload;
+    },
   },
 });
 
@@ -87,5 +96,6 @@ export const {
   changeTurn,
   startGame,
   confirmSurrender,
+  endGame,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;

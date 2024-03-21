@@ -7,6 +7,7 @@ import { RootState } from "../store";
 import { useState } from "react";
 import { ModeSection } from "./ModeSection";
 import { confirmSurrender, startGame } from "../features/settingsSlice";
+import { start } from "../utils/playSounds";
 
 export const GameSettings = () => {
   const { selectedSetting, mode, gameStarted } = useSelector(
@@ -14,6 +15,10 @@ export const GameSettings = () => {
   );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useDispatch();
+  const handlePlay = () => {
+    start();
+    dispatch(startGame());
+  };
   return (
     <section
       className=" bg-[#262522] flex flex-col justify-between p-4 laptop:w-60 rounded-md 
@@ -72,9 +77,9 @@ export const GameSettings = () => {
           className=" bg-greenBorder text-white text-2xl font-bold rounded-md w-full
        py-3 border-b-8 border-greenSquare transition-color duration-200
         hover:bg-greenHover"
-          onClick={() => dispatch(startGame())}
+          onClick={handlePlay}
         >
-          Jugar
+          Play
         </button>
       ) : (
         <button
