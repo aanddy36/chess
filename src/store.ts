@@ -26,13 +26,14 @@ export interface RootState {
     timer: {
       [Team.BLACK]: number;
       [Team.WHITE]: number;
-    }
+    };
     increment: Increm;
     selectedSetting: SettingId;
     GRID_SIZE: number;
     gameStarted: boolean;
     turn: Team;
     winner: { team: Team; reason: WReason } | null;
-    isSurrendering: boolean
+    isSurrendering: boolean;
+    isOpenWModal: boolean;
   };
 }

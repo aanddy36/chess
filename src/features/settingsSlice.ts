@@ -9,7 +9,7 @@ import {
   gameModes,
 } from "../types/settingsTypes";
 import { Team } from "../types/models";
-import { end } from "../utils/playSounds";
+import { end, start } from "../utils/playSounds";
 
 interface Props {
   mode: Modes;
@@ -24,13 +24,14 @@ interface Props {
   turn: Team;
   winner: { team: Team; reason: WReason } | null;
   isSurrendering: boolean;
+  isOpenWModal: boolean;
 }
 
 const initialState: Props = {
   mode: Modes.RAPID,
   timer: {
-    [Team.BLACK]: Duration.TEN * 3600,
-    [Team.WHITE]: Duration.TEN * 3600,
+    [Team.BLACK]: Duration.TEN * 60,
+    [Team.WHITE]: Duration.TEN * 60,
   },
   increment: Increm.NO,
   selectedSetting: SettingId.RA1,
@@ -42,8 +43,9 @@ const initialState: Props = {
       : window.innerWidth * 0.10256 + 5.5,
   gameStarted: false,
   turn: Team.WHITE,
-  winner: null /* { team: Team.BLACK, reason: WReason.ABANDONMENT } */,
+  winner: null,
   isSurrendering: false,
+  isOpenWModal: false,
 };
 
 const settingsSlice = createSlice({
@@ -64,18 +66,22 @@ const settingsSlice = createSlice({
       state.mode = temp.mode;
       state.increment = temp.Increm;
       state.timer = {
-        [Team.BLACK]: temp.duration * 3600,
-        [Team.WHITE]: temp.duration * 3600,
+        [Team.BLACK]: temp.duration * 60,
+        [Team.WHITE]: temp.duration * 60,
       };
     },
     adjustSize: (state, { payload }) => {
       state.GRID_SIZE = payload;
     },
     startGame: (state) => {
+      start();
       state.gameStarted = true;
     },
     changeTurn: (state, { payload }: { payload: Team }) => {
-      state.turn = payload;
+      if (payload !== state.turn) {
+        state.timer[state.turn] += state.increment;
+        state.turn = payload;
+      }
     },
     confirmSurrender: (state, { payload }: { payload: boolean }) => {
       state.isSurrendering = payload;
@@ -85,7 +91,34 @@ const settingsSlice = createSlice({
       { payload }: { payload: { team: Team; reason: WReason } }
     ) => {
       end();
+      state.gameStarted = false;
       state.winner = payload;
+      state.isOpenWModal = true;
+    },
+    updateTimer: (state, { payload }: { payload: Team }) => {
+      state.timer[payload] -= 1;
+    },
+    closeWModal: (state) => {
+      state.isOpenWModal = false;
+    },
+    restore: (state) => {
+      state.isOpenWModal = false;
+      let temp = {} as SingleMode;
+      for (let i of gameModes) {
+        for (let j of i.vars) {
+          if (j.name === state.selectedSetting) {
+            temp = j;
+            break;
+          }
+        }
+      }
+      state.mode = temp.mode;
+      state.increment = temp.Increm;
+      state.timer = {
+        [Team.BLACK]: temp.duration * 60,
+        [Team.WHITE]: temp.duration * 60,
+      };
+      state.turn = Team.WHITE;
     },
   },
 });
@@ -97,5 +130,8 @@ export const {
   startGame,
   confirmSurrender,
   endGame,
+  updateTimer,
+  closeWModal,
+  restore,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;

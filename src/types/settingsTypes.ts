@@ -17,7 +17,7 @@ export enum Increm {
   ONE = 1,
   TWO = 2,
   TEN = 10,
-  NO = "",
+  NO = 0,
 }
 
 export enum SettingId {

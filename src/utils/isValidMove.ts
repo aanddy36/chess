@@ -20,7 +20,8 @@ import { validRookMove } from "./validMove/rook";
 export const isValidMove = (
   board: SquareType[],
   firstSquare: SquareType,
-  lastSquare: SquareType
+  lastSquare: SquareType,
+  turn: Team
 ): Validness => {
   const { piece: firstPiece } = firstSquare;
   const { piece: lastPiece } = lastSquare;
@@ -28,7 +29,8 @@ export const isValidMove = (
   if (
     firstSquare.squareId === lastSquare.squareId ||
     (lastPiece && lastPiece.team === firstPiece?.team) ||
-    lastPiece?.type === PiecesType.KING
+    lastPiece?.type === PiecesType.KING ||
+    firstPiece?.team !== turn
   ) {
     return { isValid: IsValidType.NO };
   }

@@ -1,12 +1,42 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { clockCaster } from "../utils/clockCaster";
 import { Team } from "../types/models";
+import { useEffect } from "react";
+import { endGame, updateTimer } from "../features/settingsSlice";
+import { WReason } from "../types/settingsTypes";
+import { otherTeam } from "../utils/coordCalculus";
 
 export const FullSizeTurns = () => {
   const { timer, GRID_SIZE, turn, gameStarted } = useSelector(
     (store: RootState) => store.settings
   );
+  const dispatch = useDispatch();
+  useEffect(() => {
+    let setTimer = 0;
+    if (gameStarted) {
+      setTimer = setInterval(() => {
+        dispatch(updateTimer(turn));
+
+        /* if (turn === Team.WHITE) {
+          console.log(timer.w);
+        } else {
+          console.log(timer.b);
+        } */
+      }, 1000);
+    }
+    return () => {
+      if (setTimer) {
+        clearInterval(setTimer);
+      }
+    };
+  }, [turn, gameStarted]);
+
+  useEffect(() => {
+    if (timer[turn] === 0) {
+      dispatch(endGame({ team: otherTeam(turn), reason: WReason.TIME }));
+    }
+  }, [timer]);
   return (
     <section
       className="flex-col justify-between gap-6 hidden full:flex"

@@ -1,15 +1,22 @@
 import { FaXmark } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
-import { confirmSurrender } from "../features/settingsSlice";
+import { closeWModal, restore, startGame } from "../features/settingsSlice";
 import { RootState } from "../store";
 import { Team } from "../types/models";
+import { createBoard } from "../features/chessboardSlice";
 
 export function WinningModal() {
   const dispatch = useDispatch();
-  const handleConfirm = () => {
-    dispatch(confirmSurrender(false));
-  };
   const { winner } = useSelector((store: RootState) => store.settings);
+  const handlePlay = () => {
+    dispatch(createBoard());
+    dispatch(restore())
+    dispatch(startGame());
+  };
+  const handleNewGame = () => {
+    dispatch(createBoard());
+    dispatch(restore())
+  };
   return (
     <section className="absolute inset-0 z-[900] bg-black/50">
       <div
@@ -19,7 +26,7 @@ export function WinningModal() {
       >
         <button
           className=" opacity-50 hover:opacity-100 transition-opacity duration-200"
-          onClick={() => dispatch(confirmSurrender(false))}
+          onClick={() => dispatch(closeWModal())}
         >
           <FaXmark className=" absolute top-4 right-3 scale-[1.5]" />
         </button>
@@ -39,7 +46,7 @@ export function WinningModal() {
             className=" py-2 rounded-md grow font-medium  text-base tablet:text-lg
              bg-timerBtn  transition-colors duration-200
               hover:bg-timerHover text-white/80"
-            onClick={() => dispatch(confirmSurrender(false))}
+            onClick={handleNewGame}
           >
             New Game
           </button>
@@ -47,7 +54,7 @@ export function WinningModal() {
             className=" py-2 rounded-md font-medium  text-base tablet:text-lg grow
             bg-timerBtn  transition-colors duration-200
              hover:bg-timerHover text-white/80"
-            onClick={handleConfirm}
+            onClick={handlePlay}
           >
             Play Again
           </button>

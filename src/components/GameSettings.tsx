@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { useState } from "react";
 import { ModeSection } from "./ModeSection";
-import { confirmSurrender, startGame } from "../features/settingsSlice";
-import { start } from "../utils/playSounds";
+import { confirmSurrender, restore, startGame } from "../features/settingsSlice";
+import { createBoard } from "../features/chessboardSlice";
 
 export const GameSettings = () => {
   const { selectedSetting, mode, gameStarted } = useSelector(
@@ -16,7 +16,8 @@ export const GameSettings = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useDispatch();
   const handlePlay = () => {
-    start();
+    dispatch(createBoard());
+    dispatch(restore());
     dispatch(startGame());
   };
   return (

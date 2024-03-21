@@ -6,10 +6,11 @@ import { RootState } from "./store";
 import { createBoard, validateMove } from "./features/chessboardSlice";
 import { GameSettings } from "./components/GameSettings";
 import { FullSizeTurns } from "./components/FullSizeTurns";
-import { adjustSize } from "./features/settingsSlice";
+import { adjustSize, changeTurn } from "./features/settingsSlice";
 import { Board } from "./components/Board";
 import { SurrenderModal } from "./components/SurrenderModal";
 import { WinningModal } from "./components/WinningModal";
+import { otherTeam } from "./utils/coordCalculus";
 
 function App() {
   const grabbedOne = useRef<HTMLDivElement | null>(null);
@@ -17,7 +18,7 @@ function App() {
   const { board, firstSquare, lastSquare, moveStatus } = useSelector(
     (store: RootState) => store.chess
   );
-  const { GRID_SIZE, isSurrendering, winner } = useSelector(
+  const { GRID_SIZE, isSurrendering, isOpenWModal, turn } = useSelector(
     (store: RootState) => store.settings
   );
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ function App() {
 
     if (isValid === IsValidType.YES) {
       grabbedOne.current = null;
+      dispatch(changeTurn(otherTeam(turn)));
     } else if (isValid === IsValidType.NO) {
       if (grabbedOne.current) {
         grabbedOne.current.style.position = `static`;
@@ -41,7 +43,7 @@ function App() {
 
   useEffect(() => {
     if (lastSquare && firstSquare) {
-      dispatch(validateMove(isValidMove(board, firstSquare, lastSquare)));
+      dispatch(validateMove(isValidMove(board, firstSquare, lastSquare, turn)));
     }
   }, [firstSquare, lastSquare]);
 
@@ -70,7 +72,7 @@ function App() {
       className=" bg-bg min-h-screen flex flex-col items-center justify-between pt-4 laptop:pt-0
     laptop:px-4 semi:justify-center semi:gap-12 laptop:flex-row gap-12 laptop:gap-3 relative"
     >
-      {winner && <WinningModal />}
+      {isOpenWModal && <WinningModal />}
       {isSurrendering && <SurrenderModal />}
       <FullSizeTurns />
       <Board grabbedOne={grabbedOne} />

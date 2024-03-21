@@ -43,6 +43,8 @@ const chessboardSlice = createSlice({
   initialState,
   reducers: {
     createBoard: (state) => {
+      state.board = [];
+      state.lastMoveIDs = { first: undefined, last: undefined };
       let gridY = 0;
       for (let i = newCols.length - 1; i >= 0; i--) {
         let gridX = 0;
@@ -73,7 +75,6 @@ const chessboardSlice = createSlice({
     validateMove: (state, { payload }: { payload: Validness }) => {
       const { firstSquare, lastSquare, board } = state;
       if (payload.isValid === IsValidType.YES) {
-
         let { uptBoard } = payload;
         if (!uptBoard) {
           const { changeProp, changeTeam, capturedInPassant, pieceToPromote } =
