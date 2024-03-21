@@ -7,10 +7,16 @@ import { RootState } from "../store";
 import { changeSelectedSetting } from "../features/settingsSlice";
 
 export const ModeSection = ({ name, vars }: GameModes) => {
-  const { selectedSetting } = useSelector((store: RootState) => store.settings);
+  const { selectedSetting, gameStarted } = useSelector(
+    (store: RootState) => store.settings
+  );
   const dispatch = useDispatch();
   return (
-    <section className=" flex flex-col gap-3 text-sm">
+    <section
+      className={`flex flex-col gap-3 text-sm ${
+        gameStarted ? "opacity-60" : "opacity-100"
+      }`}
+    >
       <div className=" flex items-center text-white font-medium gap-3">
         {name === "Bullet" ? (
           <GiSilverBullet className="text-bulletLogo scale-[1.5]" />
@@ -25,13 +31,20 @@ export const ModeSection = ({ name, vars }: GameModes) => {
         {vars.map((gameVar) => (
           <button
             key={gameVar.name}
-            className={`bg-timerBtn hover:bg-timerHover transition-colors
+            className={`bg-timerBtn transition-colors
                   duration-200 rounded-md py-2 border-2 ${
                     gameVar.name === selectedSetting
-                      ? " border-greenBorder hover:border-greenBorder"
-                      : "border-timerBtn hover:border-timerHover"
-                  }`}
+                      ? " border-greenBorder"
+                      : "border-timerBtn"
+                  } ${
+              gameStarted
+                ? "disabled:opacity-60 cursor-auto"
+                : gameVar.name === selectedSetting
+                ? "hover:border-greenHover hover:bg-timerHover"
+                : "hover:bg-timerHover hover:border-timerHover"
+            }`}
             id={gameVar.name}
+            disabled={gameStarted}
             onClick={(e: any) => dispatch(changeSelectedSetting(e.target.id))}
           >
             {gameVar.name}

@@ -17,6 +17,9 @@ export default {
         timerHover: "#706e6a",
         bulletLogo: "#E3AA24",
         blitzLogo: "#FAC22E",
+        redBtn: "#c95d5d",
+        redBorder: "#955252",
+        redHover: "#e29494",
       },
       screens: {
         full: "970px",

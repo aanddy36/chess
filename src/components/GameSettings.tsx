@@ -2,16 +2,18 @@ import { FaChevronDown, FaRegClock } from "react-icons/fa6";
 import { GiSilverBullet } from "react-icons/gi";
 import { AiFillThunderbolt } from "react-icons/ai";
 import { Modes, gameModes } from "../types/settingsTypes";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { useState } from "react";
 import { ModeSection } from "./ModeSection";
+import { confirmSurrender, startGame } from "../features/settingsSlice";
 
 export const GameSettings = () => {
-  const { selectedSetting, mode } = useSelector(
+  const { selectedSetting, mode, gameStarted } = useSelector(
     (store: RootState) => store.settings
   );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dispatch = useDispatch();
   return (
     <section
       className=" bg-[#262522] flex flex-col justify-between p-4 laptop:w-60 rounded-md 
@@ -65,13 +67,24 @@ export const GameSettings = () => {
           return <ModeSection name={name} vars={vars} key={name} />;
         })}
       </article>
-      <button
-        className=" bg-greenBorder text-white text-2xl font-bold rounded-md w-full
+      {!gameStarted ? (
+        <button
+          className=" bg-greenBorder text-white text-2xl font-bold rounded-md w-full
        py-3 border-b-8 border-greenSquare transition-color duration-200
         hover:bg-greenHover"
-      >
-        Jugar
-      </button>
+          onClick={() => dispatch(startGame())}
+        >
+          Jugar
+        </button>
+      ) : (
+        <button
+          className=" bg-redBtn text-white text-2xl font-bold rounded-md w-full
+       py-3 border-b-8 border-redBorder transition-color duration-200 hover:bg-redHover"
+          onClick={() => dispatch(confirmSurrender(true))}
+        >
+          Surrender
+        </button>
+      )}
     </section>
   );
 };
