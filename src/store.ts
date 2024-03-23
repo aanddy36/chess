@@ -32,7 +32,7 @@ export interface RootState {
     GRID_SIZE: number;
     gameStarted: boolean;
     turn: Team;
-    winner: { team: Team; reason: WReason } | null;
+    winner: { team: Team | null; reason: WReason } | null;
     isSurrendering: boolean;
     isOpenWModal: boolean;
   };

@@ -10,12 +10,12 @@ export function WinningModal() {
   const { winner } = useSelector((store: RootState) => store.settings);
   const handlePlay = () => {
     dispatch(createBoard());
-    dispatch(restore())
+    dispatch(restore());
     dispatch(startGame());
   };
   const handleNewGame = () => {
     dispatch(createBoard());
-    dispatch(restore())
+    dispatch(restore());
   };
   return (
     <section className="absolute inset-0 z-[900] bg-black/50">
@@ -31,10 +31,16 @@ export function WinningModal() {
           <FaXmark className=" absolute top-4 right-3 scale-[1.5]" />
         </button>
         <div className="flex items-center gap-3 py-4 justify-center">
-          <img src="/src/assets/trophy.png" className="w-12 h-12" />
+          {winner?.team && (
+            <img src="/src/assets/trophy.png" className="w-12 h-12" />
+          )}
           <div className=" flex flex-col items-center">
             <h4 className=" font-semibold text-2xl tablet:text-3xl text-center">
-              {winner?.team === Team.WHITE ? "White" : "Black"} Won!
+              {winner?.team
+                ? winner?.team === Team.WHITE
+                  ? "White Won!"
+                  : "Black Won!"
+                : "Draw"}
             </h4>
             <span className=" text-center font-medium opacity-80 text-base">
               for {winner?.reason}

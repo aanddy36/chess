@@ -31,13 +31,17 @@ export function cmKing(square: SquareType, board: SquareType[]) {
           sqr.piece.type !== PiecesType.KING)) &&
       !sqr.inDanger.some((item) => item.team !== square.piece?.team)
     ) {
+      //console.log(newX, newY);
+      
       canMove = true;
     }
     if (canMove) {
       break;
     }
   }
-  console.log(canMove);
+  //console.log(square.piece?.team, canMove);
+  
+  return canMove;
 }
 export function cmKnight(square: SquareType, board: SquareType[]) {
   const possiblePairs = [
@@ -74,5 +78,5 @@ export function cmKnight(square: SquareType, board: SquareType[]) {
       break;
     }
   }
-  console.log(canMove);
+  return canMove;
 }

@@ -26,4 +26,4 @@ export function end() {
   const capture = new Audio("/src/assets/game-end.mp3");
   capture.play();
 }
-export const arraySounds = [moveDone, capturePiece, promotion, check, castle, start, end];
+export const arraySounds = [moveDone, capturePiece, promotion, check, castle, end];

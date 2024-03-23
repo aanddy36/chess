@@ -64,5 +64,5 @@ export function cmBishop(square: SquareType, board: SquareType[]) {
       break;
     }
   }
-  console.log(canMove);
+  return canMove
 }

@@ -37,6 +37,7 @@ export enum MoveType {
   PROMOTE,
   CHECK,
   CASTLE,
+  STALEMATE,
   CHECK_MATE,
 }
 export interface Coord {

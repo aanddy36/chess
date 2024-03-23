@@ -120,4 +120,5 @@ export enum WReason {
   TIME = "time",
   ABANDONMENT = "abandonment",
   CHECK_MATE = "check mate",
+  STALEMATE = "stalemate",
 }

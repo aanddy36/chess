@@ -1,16 +1,23 @@
 import { useEffect, useRef } from "react";
 import { isValidMove } from "./utils/isValidMove";
-import { IsValidType } from "./types/models";
+import { IsValidType, MoveType } from "./types/models";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import { createBoard, validateMove } from "./features/chessboardSlice";
 import { GameSettings } from "./components/GameSettings";
 import { FullSizeTurns } from "./components/FullSizeTurns";
-import { adjustSize, changeTurn } from "./features/settingsSlice";
+import { adjustSize, changeTurn, endGame } from "./features/settingsSlice";
 import { Board } from "./components/Board";
 import { SurrenderModal } from "./components/SurrenderModal";
 import { WinningModal } from "./components/WinningModal";
 import { otherTeam } from "./utils/coordCalculus";
+import { WReason } from "./types/settingsTypes";
+
+//OJO: EN CADA CANMOVE HAY QUE SOPESAR SI LA FICHA ESTA CLAVADA O NO. O sea que si se mueve
+//quedaría en jaque el rey, lo que hace que no pueda moverse.
+
+//bug: CUANDO UN PEON ESTA EN PENULTIMA CASILLA, E INTENTA HACER UN MOVIMIENTO ILEGAL DIAGONAL,
+//(O SEA QUE NO HAY FICHA PARA COMER), APARECE EL MENU DE CORONAR, LO CUAL NO SE PUEDE.
 
 function App() {
   const grabbedOne = useRef<HTMLDivElement | null>(null);
@@ -28,11 +35,15 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const { isValid } = moveStatus;
+    const { isValid, moveType } = moveStatus;
 
     if (isValid === IsValidType.YES) {
       grabbedOne.current = null;
-      dispatch(changeTurn(otherTeam(turn)));
+      if (moveType === MoveType.STALEMATE) {
+        dispatch(endGame({ team: null, reason: WReason.STALEMATE }));
+      } else {
+        dispatch(changeTurn(otherTeam(turn)));
+      }
     } else if (isValid === IsValidType.NO) {
       if (grabbedOne.current) {
         grabbedOne.current.style.position = `static`;

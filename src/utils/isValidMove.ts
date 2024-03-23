@@ -1,6 +1,7 @@
 import {
   IsValidType,
   MoveType,
+  PieceType,
   PiecesType,
   SquareType,
   Team,
@@ -35,6 +36,8 @@ export const isValidMove = (
   ) {
     return { isValid: IsValidType.NO };
   }
+
+  //CHECK IF MOVE IS VALID FOR EACH BASED ON THE PIECE TYPE
   let ans = {} as Validness;
   if (firstPiece?.type !== PiecesType.KNIGHT) {
     let middleSquares = crossedSquares(board, firstSquare, lastSquare);
@@ -62,6 +65,7 @@ export const isValidMove = (
     ans = validKnightMove(firstSquare, lastSquare);
   }
   let uptBoard = [] as SquareType[];
+  //IF IT IS VALID
   if (ans.isValid === IsValidType.YES) {
     const {
       changeProp,
@@ -72,6 +76,7 @@ export const isValidMove = (
     } = ans;
     const temp = [...board];
 
+    //UPDATE THE BOARD WITH THE NEW ORGANIZATION
     let newBoard = movePiece(firstSquare, lastSquare, temp, {
       prop: changeProp,
       changeTeam,
@@ -79,24 +84,49 @@ export const isValidMove = (
       pieceToPromote,
       rookChange,
     });
+    //UPDATE THE SQUARES THREATHNED
     uptBoard = uptDangerZones(newBoard);
-    uptBoard.forEach((item) => {
-      if (item.piece?.type === PiecesType.PAWN) {
-        canItMove(item, uptBoard);
-      }
-    });
+
     let kings = uptBoard.filter((sq) => sq.piece?.type === PiecesType.KING);
     let allyKing = kings.filter((sq) => sq.piece?.team === firstPiece?.team)[0];
     let enemyKing = kings.filter(
       (sq) => sq.piece?.team === otherTeam(firstPiece?.team)
     )[0];
+
+    //CHECK IF YOUR KING IS IN DANGER WITH THE NEW POSITION
     if (
       allyKing.inDanger.some((sqr) => sqr.team === otherTeam(firstPiece?.team))
     ) {
       return { isValid: IsValidType.NO };
     }
+
+    //IF ENEMY KING IS IN CHECK, MAKE THAT MOVEMENT
     if (enemyKing.inDanger.some((sqr) => sqr.team === firstPiece?.team)) {
       return { isValid: IsValidType.YES, moveType: MoveType.CHECK };
+    }
+
+    //UPDATE CANMOVE PROPERTY TO CHECK FOR A STALEMATE
+    uptBoard = uptBoard.map((item) => {
+      let newPiece: PieceType | null = null;
+      if (item.piece) {
+        newPiece = { ...item.piece, canMove: canItMove(item, uptBoard) };
+      }
+      return { ...item, piece: newPiece };
+    });
+
+    const whitePieces = uptBoard.filter(
+      (sqr) => sqr.piece?.team === Team.WHITE
+    );
+    const blackPieces = uptBoard.filter(
+      (sqr) => sqr.piece?.team === Team.BLACK
+    );
+
+    //TABLAS
+    if (
+      !whitePieces.some((p) => p.piece?.canMove) ||
+      !blackPieces.some((p) => p.piece?.canMove)
+    ) {
+      return { isValid: IsValidType.YES, moveType: MoveType.STALEMATE };
     }
     return { ...ans, uptBoard };
   }

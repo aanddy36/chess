@@ -60,5 +60,5 @@ export function cmPawn(square: SquareType, board: SquareType[]) {
       break;
     }
   }
-  console.log(canMove);
+  return canMove;
 }

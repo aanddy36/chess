@@ -62,5 +62,7 @@ export function canItMove(square: SquareType, board: SquareType[]) {
       return cmKing(square, board);
     case PiecesType.KNIGHT:
       return cmKnight(square, board);
+    default:
+      return false;
   }
 }

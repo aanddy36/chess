@@ -26,15 +26,15 @@ export const validPawnMove = (
 
   //PAWN ATTACK DIAGONALLY
   if (diagonalOneSquareMove && direc > 0) {
-    //IF IS THE LAST SQUARE
-    if (lastRef === lastSquare.chessPosition.y) {
-      return {
-        isValid: IsValidType.IN_PROCESS,
-        changeTeam: firstPiece?.team,
-      };
-    }
     //IF THERE IS AN ENEMY PAWN
     if (lastPiece) {
+      //IF IS THE LAST SQUARE
+      if (lastRef === lastSquare.chessPosition.y) {
+        return {
+          isValid: IsValidType.IN_PROCESS,
+          changeTeam: firstPiece?.team,
+        };
+      }
       return {
         isValid: IsValidType.YES,
         moveType: MoveType.CAPTURE,

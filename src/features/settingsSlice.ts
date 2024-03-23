@@ -22,7 +22,7 @@ interface Props {
   GRID_SIZE: number;
   gameStarted: boolean;
   turn: Team;
-  winner: { team: Team; reason: WReason } | null;
+  winner: { team: Team | null; reason: WReason } | null;
   isSurrendering: boolean;
   isOpenWModal: boolean;
 }
@@ -88,7 +88,7 @@ const settingsSlice = createSlice({
     },
     endGame: (
       state,
-      { payload }: { payload: { team: Team; reason: WReason } }
+      { payload }: { payload: { team: Team | null; reason: WReason } }
     ) => {
       end();
       state.gameStarted = false;
