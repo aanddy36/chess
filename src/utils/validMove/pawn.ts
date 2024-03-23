@@ -75,6 +75,7 @@ export const validPawnMove = (
       return {
         isValid: IsValidType.YES,
         moveType: MoveType.MOVE,
+        changeProp: firstPiece.enPassant ? [ChangeProp.PAWN_EN_PASSANT] : [],
       };
     } else if (!firstPiece?.firstMoveDone) {
       return {

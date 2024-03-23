@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { SquareColor, SquareType } from "../types/models";
+import { SquareColor, SquareType, Team } from "../types/models";
 import { RootState } from "../store";
 import {
   activeMouse,
@@ -71,7 +71,13 @@ export const SquareComp = ({ square, grabbedOne }: Props) => {
             squareId === lastMoveIDs.last
           ? "bg-greenSelected"
           : "bg-greenSquare"
-      }   `}
+      }   `} /* {`font-semibold square ${
+        square.inDanger.includes(Team.BLACK)
+          ? "bg-redBtn"
+          : square.inDanger.includes(Team.WHITE)
+          ? " bg-redHover"
+          : "bg-white"
+      }`} */
       style={{ height: `${GRID_SIZE}px`, width: `${GRID_SIZE}px` }}
       key={squareId}
       id={squareId}

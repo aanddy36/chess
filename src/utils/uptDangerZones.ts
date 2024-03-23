@@ -1,12 +1,13 @@
-import { InDanger } from "../classes/Square";
-import { SquareType } from "../types/models";
-import { evaluateFdz } from "./futureDangerZones";
+import { DangerSquare, SquareType } from "../types/models";
+import { getDangerSqrs } from "./inDangerSqrs";
 
 export function uptDangerZones(board: SquareType[]) {
-  let dangeredSqrs = board.map((sqr) => {
+
+  let examp: (DangerSquare | undefined)[] | (DangerSquare[] | undefined)[] = [];
+  examp = board.map((sqr) => {
     const { piece } = sqr;
     if (piece) {
-      let newD = evaluateFdz({
+      let newD = getDangerSqrs({
         type: piece.type,
         lastSquare: sqr,
         firstSquare: sqr,
@@ -14,27 +15,21 @@ export function uptDangerZones(board: SquareType[]) {
       });
       return newD;
     }
-  }) as any;
-  dangeredSqrs = [
-    ...new Set(
-      dangeredSqrs
-        .flatMap((item: string[] | undefined) => item)
-        .filter((item: string | undefined) => item)
-        .map((item: any) => JSON.stringify(item))
-    ),
-  ].map((item: any) => JSON.parse(item));
+  });
+  examp = examp.flatMap((item) => item).filter((item) => item);
 
-  const newBoard = board.map((b) => {
-    const filt = (dangeredSqrs as InDanger[]).filter(
-      (c: InDanger) => c.id === b.squareId
+  const tempBoard = board.map((b) => {
+    const filt = (examp as DangerSquare[]).filter(
+      (c) => c.targetSqr === b.squareId
     );
     b.inDanger = [];
+
     for (let a of filt) {
-      b.inDanger.push(a.team);
+      b.inDanger.push(a.attackPiece);
     }
     return b;
   });
-  //console.log(newBoard);
 
-  return newBoard;
+
+  return tempBoard;
 }

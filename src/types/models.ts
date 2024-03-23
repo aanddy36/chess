@@ -1,6 +1,6 @@
 export const newCols = [1, 2, 3, 4, 5, 6, 7, 8];
 export const newRows = ["a", "b", "c", "d", "e", "f", "g", "h"];
-export const GRID_SIZE = 64;//75
+export const GRID_SIZE = 64; //75
 export enum SquareColor {
   GREEN,
   WHITE,
@@ -90,7 +90,7 @@ export interface SquareType {
   color: SquareColor;
   gridPosition: Coord;
   piece: PieceType | null;
-  inDanger: Team[];
+  inDanger: Attacker[];
   squareId: string;
 }
 
@@ -101,4 +101,15 @@ export interface PieceType {
   id: string;
   firstMoveDone?: boolean;
   enPassant?: boolean;
+  canMove: boolean;
+}
+
+export interface Attacker {
+  id: string;
+  team: Team;
+}
+
+export interface DangerSquare {
+  attackPiece: { id: string; team: Team };
+  targetSqr: string;
 }

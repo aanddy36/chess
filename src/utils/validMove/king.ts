@@ -24,7 +24,7 @@ export function validKingMove(
   } = findDistance(firstSquare.gridPosition, lastSquare.gridPosition);
 
   const willBeInDanger = lastSquare.inDanger.some(
-    (sq) => sq != firstPiece?.team
+    (sq) => sq.team != firstPiece?.team
   );
 
   //CASTLE CASE
@@ -51,7 +51,7 @@ export function validKingMove(
     }
     const rook = dangerArray[dangerArray.length - 1];
     const inDanger = dangerArray.some((sq) =>
-      sq.inDanger.includes(otherTeam(firstPiece?.team))
+      sq.inDanger.some((item) => item.team === otherTeam(firstPiece?.team))
     );
     if (
       piecesCount === 2 &&
@@ -84,9 +84,7 @@ export function validKingMove(
     return {
       isValid: IsValidType.YES,
       moveType: lastPiece ? MoveType.CAPTURE : MoveType.MOVE,
-      changeProp: !firstSquare.piece?.firstMoveDone
-        ? [ChangeProp.FIRST_M]
-        : [],
+      changeProp: !firstSquare.piece?.firstMoveDone ? [ChangeProp.FIRST_M] : [],
     };
   }
   return { isValid: IsValidType.NO };

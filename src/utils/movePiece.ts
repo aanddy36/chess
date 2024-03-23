@@ -1,5 +1,11 @@
 import { nanoid } from "nanoid";
-import { ChangeProp, PieceType, PiecesType, SquareType, Team } from "../types/models";
+import {
+  ChangeProp,
+  PieceType,
+  PiecesType,
+  SquareType,
+  Team,
+} from "../types/models";
 
 interface ChangeObj {
   prop: ChangeProp[] | undefined;
@@ -44,6 +50,7 @@ export function movePiece(
           image: `/src/assets/${firstSquare.piece.team}${changeObj.pieceToPromote}.png`,
           id: nanoid(),
           firstMoveDone: changeObj.pieceToPromote === PiecesType.ROOK && true,
+          canMove: true,
         };
       } else {
         newPiece = { ...(firstSquare.piece as PieceType) };
@@ -74,6 +81,7 @@ export function movePiece(
         image: `/src/assets/${firstSquare.piece?.team as Team}r.png`,
         id: nanoid(),
         firstMoveDone: true,
+        canMove: true,
       };
       return { ...square, piece: newPiece };
     }
