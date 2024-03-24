@@ -27,11 +27,11 @@ export const isValidMove = (
 ): Validness => {
   const { piece: firstPiece } = firstSquare;
   const { piece: lastPiece } = lastSquare;
-
   if (
     firstSquare.squareId === lastSquare.squareId ||
     (lastPiece && lastPiece.team === firstPiece?.team) ||
-    lastPiece?.type === PiecesType.KING /* ||
+    lastPiece?.type === PiecesType.KING ||
+    !firstPiece?.canMove /* ||
     firstPiece?.team !== turn */
   ) {
     return { isValid: IsValidType.NO };
@@ -94,11 +94,11 @@ export const isValidMove = (
     )[0];
 
     //CHECK IF YOUR KING IS IN DANGER WITH THE NEW POSITION
-    if (
+    /* if (
       allyKing.inDanger.some((sqr) => sqr.team === otherTeam(firstPiece?.team))
     ) {
       return { isValid: IsValidType.NO };
-    }
+    } */
 
     //IF ENEMY KING IS IN CHECK, MAKE THAT MOVEMENT
     if (enemyKing.inDanger.some((sqr) => sqr.team === firstPiece?.team)) {

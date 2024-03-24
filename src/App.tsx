@@ -16,9 +16,6 @@ import { WReason } from "./types/settingsTypes";
 //OJO: EN CADA CANMOVE HAY QUE SOPESAR SI LA FICHA ESTA CLAVADA O NO. O sea que si se mueve
 //quedaría en jaque el rey, lo que hace que no pueda moverse.
 
-//bug: CUANDO UN PEON ESTA EN PENULTIMA CASILLA, E INTENTA HACER UN MOVIMIENTO ILEGAL DIAGONAL,
-//(O SEA QUE NO HAY FICHA PARA COMER), APARECE EL MENU DE CORONAR, LO CUAL NO SE PUEDE.
-
 function App() {
   const grabbedOne = useRef<HTMLDivElement | null>(null);
 
