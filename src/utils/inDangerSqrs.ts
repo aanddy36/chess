@@ -147,11 +147,17 @@ export function sqrRook(
         targetSqr: convertToChessGrid(newDanger.gridPosition),
       };
       dangerArray.push(newSq);
-      if (newDanger.piece && firstSquare.piece?.id !== newDanger.piece.id) {
+      if (
+        newDanger.piece &&
+        newDanger.piece.type !== PiecesType.KING &&
+        firstSquare.piece?.id !== newDanger.piece.id
+      ) {
         break;
       }
     }
   }
+
+
   return dangerArray;
 }
 export function getDangerSqrs({

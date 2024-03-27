@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { endGame, updateTimer } from "../features/settingsSlice";
 import { WReason } from "../types/settingsTypes";
 import { otherTeam } from "../utils/coordCalculus";
+import { end } from "../utils/playSounds";
 
 export const FullSizeTurns = () => {
   const { timer, GRID_SIZE, turn, gameStarted } = useSelector(
@@ -17,12 +18,6 @@ export const FullSizeTurns = () => {
     if (gameStarted) {
       setTimer = setInterval(() => {
         dispatch(updateTimer(turn));
-
-        /* if (turn === Team.WHITE) {
-          console.log(timer.w);
-        } else {
-          console.log(timer.b);
-        } */
       }, 1000);
     }
     return () => {
@@ -34,6 +29,7 @@ export const FullSizeTurns = () => {
 
   useEffect(() => {
     if (timer[turn] === 0) {
+      end();
       dispatch(endGame({ team: otherTeam(turn), reason: WReason.TIME }));
     }
   }, [timer]);

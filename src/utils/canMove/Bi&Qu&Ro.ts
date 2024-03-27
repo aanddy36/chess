@@ -1,4 +1,4 @@
-import { Coord, Direcs, PiecesType, SquareType } from "../../types/models";
+import { Coord, PiecesType, SquareType } from "../../types/models";
 import { convertToChessGrid } from "../coordCalculus";
 
 export function cmBishop(square: SquareType, board: SquareType[]): boolean {

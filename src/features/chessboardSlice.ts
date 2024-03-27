@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-//import { Square } from "../classes/Square";
 import {
   Coord,
   IsValidType,

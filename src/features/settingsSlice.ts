@@ -9,7 +9,7 @@ import {
   gameModes,
 } from "../types/settingsTypes";
 import { Team } from "../types/models";
-import { end, start } from "../utils/playSounds";
+import { start } from "../utils/playSounds";
 
 interface Props {
   mode: Modes;
@@ -90,7 +90,6 @@ const settingsSlice = createSlice({
       state,
       { payload }: { payload: { team: Team | null; reason: WReason } }
     ) => {
-      end();
       state.gameStarted = false;
       state.winner = payload;
       state.isOpenWModal = true;

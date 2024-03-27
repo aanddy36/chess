@@ -1,7 +1,6 @@
 import { nanoid } from "nanoid";
 import {
   ChangeProp,
-  Direcs,
   PieceType,
   PiecesType,
   SquareType,

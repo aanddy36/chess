@@ -1,4 +1,4 @@
-import { Direcs, PiecesType, SquareType, Team } from "../../types/models";
+import { PiecesType, SquareType, Team } from "../../types/models";
 import { convertToChessGrid } from "../coordCalculus";
 
 export function cmPawn(square: SquareType, board: SquareType[]) {
@@ -21,7 +21,6 @@ export function cmPawn(square: SquareType, board: SquareType[]) {
   for (let pos of possibleX) {
     const newX = x + pos.x;
     const newY = pos.y;
-    //console.log(newY);
 
     if (newY < 0 || newY > 7 || newX < 0 || newX > 7) {
       continue;

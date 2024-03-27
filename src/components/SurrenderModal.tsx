@@ -5,11 +5,13 @@ import { RootState } from "../store";
 import { Team } from "../types/models";
 import { WReason } from "../types/settingsTypes";
 import { otherTeam } from "../utils/coordCalculus";
+import { end } from "../utils/playSounds";
 
 export function SurrenderModal() {
   const dispatch = useDispatch();
   const handleConfirm = () => {
     dispatch(confirmSurrender(false));
+    end()
     dispatch(endGame({team: otherTeam(turn), reason: WReason.ABANDONMENT}))
   };
   const { turn } = useSelector((store: RootState) => store.settings);

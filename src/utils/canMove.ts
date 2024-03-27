@@ -53,7 +53,6 @@ export function canItMove(
   board: SquareType[]
 ): { canMove: boolean; pinDirec: Direcs | null } {
   const { x, y } = square.gridPosition;
-  //let ans: Direcs[] | null = null;
   let canMove = false;
   //CHECK IF THE PIECE CAN BE MOVED NORMALLY
   switch (square.piece?.type) {
@@ -116,13 +115,11 @@ export function canItMove(
     return { canMove, pinDirec: null };
   }
 
-  //console.log(square.squareId,posPaths);
-
   //WE EVALUATE EACH DIRECTION TO SEE IF IT IS PINNED
   let sqrsByDirec = posPaths.map((dir) => {
     let sqrs = [];
     const myDirec = getDirec(dir);
-    //console.log(square.squareId, myDirec);
+
     //CHEQUEAMOS SI LA CASILLA DE MAS ADELANTE TIENE AL REY DE NUESTRO EQUIPO O A UNA PIEZA
     //RIVAL. PARARÁ HASTA ENCONTRAR UNA PIEZA
     for (let i = 1; i < 8; i++) {
@@ -182,7 +179,6 @@ export function canItMove(
     ) {
       sqrs = [];
     }
-    //console.log(square.squareId, sqrs);
 
     //EN CASO DE QUE AUN HAYA CANDIDATOS, SE ENTRA
     let posDirecs: Direcs | null = null;
@@ -207,12 +203,10 @@ export function canItMove(
           }
           break;
       }
-      //console.log(square.squareId, sqrs);
     }
     return posDirecs;
   });
   sqrsByDirec = sqrsByDirec.filter((dir) => dir);
-  //console.log(square.squareId, sqrsByDirec);
   if (!sqrsByDirec.length) {
     return { canMove, pinDirec: null };
   } else {

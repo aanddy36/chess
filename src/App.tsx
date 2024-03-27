@@ -13,9 +13,6 @@ import { WinningModal } from "./components/WinningModal";
 import { otherTeam } from "./utils/coordCalculus";
 import { WReason } from "./types/settingsTypes";
 
-//OJO: EN CADA CANMOVE HAY QUE SOPESAR SI LA FICHA ESTA CLAVADA O NO. O sea que si se mueve
-//quedaría en jaque el rey, lo que hace que no pueda moverse.
-
 function App() {
   const grabbedOne = useRef<HTMLDivElement | null>(null);
 
@@ -36,7 +33,9 @@ function App() {
 
     if (isValid === IsValidType.YES) {
       grabbedOne.current = null;
-      if (moveType === MoveType.STALEMATE) {
+      if (moveType === MoveType.CHECK_MATE) {
+        dispatch(endGame({ team: turn, reason: WReason.CHECK_MATE }));
+      } else if (moveType === MoveType.STALEMATE) {
         dispatch(endGame({ team: null, reason: WReason.STALEMATE }));
       } else {
         dispatch(changeTurn(otherTeam(turn)));

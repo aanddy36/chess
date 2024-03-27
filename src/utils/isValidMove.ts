@@ -32,9 +32,8 @@ export const isValidMove = (
   if (
     firstSquare.squareId === lastSquare.squareId ||
     (lastPiece && lastPiece.team === firstPiece?.team) ||
-    lastPiece?.type === PiecesType.KING /*||
-    !firstPiece?.pinDirec  ||
-    firstPiece?.team !== turn */
+    lastPiece?.type === PiecesType.KING ||
+    firstPiece?.team !== turn
   ) {
     return { isValid: IsValidType.NO };
   }
@@ -98,7 +97,6 @@ export const isValidMove = (
       }
       return { ...item, piece: newPiece };
     });
-    console.log(uptBoard);
 
     let kings = uptBoard.filter((sq) => sq.piece?.type === PiecesType.KING);
     let allyKing = kings.filter((sq) => sq.piece?.team === firstPiece?.team)[0];
@@ -112,12 +110,18 @@ export const isValidMove = (
 
     //IF ENEMY KING IS IN CHECK, MAKE THAT MOVEMENT
     if (enemyKing.inDanger.some((sqr) => sqr.team === firstPiece?.team)) {
-      preventMate(uptBoard, lastSquare, enemyKing);
-
-      return { isValid: IsValidType.YES, moveType: MoveType.CHECK, uptBoard };
+      const isMate = preventMate(uptBoard, lastSquare, enemyKing);
+      if (isMate) {
+        return {
+          isValid: IsValidType.YES,
+          moveType: MoveType.CHECK_MATE,
+          uptBoard,
+        };
+      } else {
+        return { isValid: IsValidType.YES, moveType: MoveType.CHECK, uptBoard };
+      }
     }
 
-    
     const whitePieces = uptBoard.filter(
       (sqr) => sqr.piece?.team === Team.WHITE
     );

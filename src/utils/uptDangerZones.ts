@@ -29,7 +29,6 @@ export function uptDangerZones(board: SquareType[]) {
     }
     return b;
   });
-
-
+  
   return tempBoard;
 }
