@@ -89,34 +89,16 @@ export const isValidMove = (
     //UPDATE THE SQUARES THREATHNED
     uptBoard = uptDangerZones(newBoard);
 
-    //UPDATE PINNED PROPERTY
+    //UPDATE PINNED AND CANMOVE PROPERTY
     uptBoard = uptBoard.map((item) => {
       let newPiece: PieceType | null = null;
+      const { canMove, pinDirec } = canItMove(item, uptBoard);
       if (item.piece) {
-        newPiece = { ...item.piece, pinDirec: canItMove(item, uptBoard) };
+        newPiece = { ...item.piece, pinDirec, canMove };
       }
       return { ...item, piece: newPiece };
     });
-    //console.log(uptBoard);
-
-    const whitePieces = uptBoard.filter(
-      (sqr) => sqr.piece?.team === Team.WHITE
-    );
-    const blackPieces = uptBoard.filter(
-      (sqr) => sqr.piece?.team === Team.BLACK
-    );
-
-    //TABLAS
-    /* if (
-      !whitePieces.some((p) => p.piece?.pinDirec) ||
-      !blackPieces.some((p) => p.piece?.pinDirec)
-    ) {
-      return {
-        isValid: IsValidType.YES,
-        moveType: MoveType.STALEMATE,
-        uptBoard,
-      };
-    } */
+    console.log(uptBoard);
 
     let kings = uptBoard.filter((sq) => sq.piece?.type === PiecesType.KING);
     let allyKing = kings.filter((sq) => sq.piece?.team === firstPiece?.team)[0];
@@ -133,6 +115,26 @@ export const isValidMove = (
       preventMate(uptBoard, lastSquare, enemyKing);
 
       return { isValid: IsValidType.YES, moveType: MoveType.CHECK, uptBoard };
+    }
+
+    
+    const whitePieces = uptBoard.filter(
+      (sqr) => sqr.piece?.team === Team.WHITE
+    );
+    const blackPieces = uptBoard.filter(
+      (sqr) => sqr.piece?.team === Team.BLACK
+    );
+
+    //TABLAS
+    if (
+      !whitePieces.some((p) => p.piece?.canMove) ||
+      !blackPieces.some((p) => p.piece?.canMove)
+    ) {
+      return {
+        isValid: IsValidType.YES,
+        moveType: MoveType.STALEMATE,
+        uptBoard,
+      };
     }
 
     return { ...ans, uptBoard };

@@ -51,34 +51,34 @@ export function sqrsPawn(
 export function canItMove(
   square: SquareType,
   board: SquareType[]
-): Direcs | null {
+): { canMove: boolean; pinDirec: Direcs | null } {
   const { x, y } = square.gridPosition;
   //let ans: Direcs[] | null = null;
-  let canPieceMove = false;
+  let canMove = false;
   //CHECK IF THE PIECE CAN BE MOVED NORMALLY
   switch (square.piece?.type) {
     case PiecesType.PAWN:
-      canPieceMove = cmPawn(square, board);
+      canMove = cmPawn(square, board);
       break;
     case PiecesType.ROOK:
-      canPieceMove = cmBishop(square, board);
+      canMove = cmBishop(square, board);
       break;
     case PiecesType.QUEEN:
-      canPieceMove = cmBishop(square, board);
+      canMove = cmBishop(square, board);
       break;
     case PiecesType.BISHOP:
-      canPieceMove = cmBishop(square, board);
+      canMove = cmBishop(square, board);
       break;
     case PiecesType.KING:
-      canPieceMove = cmKing(square, board);
+      canMove = cmKing(square, board);
       break;
     case PiecesType.KNIGHT:
-      canPieceMove = cmKnight(square, board);
+      canMove = cmKnight(square, board);
       break;
   }
   //IF CANT MOVE, THEN WE SHOULDNT EVALUATE IF ITS PINNED, WE RETURN FALSE
-  if (!canPieceMove) {
-    return null;
+  if (!canMove) {
+    return { canMove, pinDirec: null };
   }
 
   //ALGORITHM TO FIND PINNED PIECES. IF PIECE CANT BE MOVED, IT WILL NOT ENTER HERE
@@ -113,7 +113,7 @@ export function canItMove(
 
   //PIECES IN THE BORDERS ARE EXCLUDED AS THEY CANT BE PINNED
   if (!posPaths.length) {
-    return null;
+    return { canMove, pinDirec: null };
   }
 
   //console.log(square.squareId,posPaths);
@@ -214,8 +214,8 @@ export function canItMove(
   sqrsByDirec = sqrsByDirec.filter((dir) => dir);
   //console.log(square.squareId, sqrsByDirec);
   if (!sqrsByDirec.length) {
-    return null;
+    return { canMove, pinDirec: null };
   } else {
-    return sqrsByDirec[0];
+    return { canMove, pinDirec: sqrsByDirec[0] };
   }
 }

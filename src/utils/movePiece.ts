@@ -52,6 +52,7 @@ export function movePiece(
           id: nanoid(),
           firstMoveDone: changeObj.pieceToPromote === PiecesType.ROOK && true,
           pinDirec: null,
+          canMove: true,
         };
       } else {
         newPiece = { ...(firstSquare.piece as PieceType) };
@@ -83,6 +84,7 @@ export function movePiece(
         id: nanoid(),
         firstMoveDone: true,
         pinDirec: null,
+        canMove: true,
       };
       return { ...square, piece: newPiece };
     }

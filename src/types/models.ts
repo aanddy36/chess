@@ -103,6 +103,7 @@ export interface PieceType {
   firstMoveDone?: boolean;
   enPassant?: boolean;
   pinDirec: Direcs | null;
+  canMove: boolean;
 }
 
 export interface Attacker {
