@@ -102,7 +102,7 @@ export interface PieceType {
   id: string;
   firstMoveDone?: boolean;
   enPassant?: boolean;
-  canMove: boolean;
+  pinDirec: Direcs | null;
 }
 
 export interface Attacker {
@@ -113,4 +113,11 @@ export interface Attacker {
 export interface DangerSquare {
   attackPiece: { id: string; team: Team };
   targetSqr: string;
+}
+
+export enum Direcs {
+  X = "X",
+  Y = "Y",
+  NE = "NE",
+  NW = "NW",
 }

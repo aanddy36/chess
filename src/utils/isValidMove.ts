@@ -11,6 +11,7 @@ import { canItMove } from "./canMove";
 import { crossedSquares, otherTeam } from "./coordCalculus";
 
 import { movePiece } from "./movePiece";
+import { preventMate } from "./preventMate";
 import { uptDangerZones } from "./uptDangerZones";
 import { validBishopMove } from "./validMove/bishop";
 import { validKingMove } from "./validMove/king";
@@ -27,11 +28,12 @@ export const isValidMove = (
 ): Validness => {
   const { piece: firstPiece } = firstSquare;
   const { piece: lastPiece } = lastSquare;
+
   if (
     firstSquare.squareId === lastSquare.squareId ||
     (lastPiece && lastPiece.team === firstPiece?.team) ||
-    lastPiece?.type === PiecesType.KING ||
-    !firstPiece?.canMove /* ||
+    lastPiece?.type === PiecesType.KING /*||
+    !firstPiece?.pinDirec  ||
     firstPiece?.team !== turn */
   ) {
     return { isValid: IsValidType.NO };
@@ -87,32 +89,15 @@ export const isValidMove = (
     //UPDATE THE SQUARES THREATHNED
     uptBoard = uptDangerZones(newBoard);
 
-    let kings = uptBoard.filter((sq) => sq.piece?.type === PiecesType.KING);
-    let allyKing = kings.filter((sq) => sq.piece?.team === firstPiece?.team)[0];
-    let enemyKing = kings.filter(
-      (sq) => sq.piece?.team === otherTeam(firstPiece?.team)
-    )[0];
-
-    //CHECK IF YOUR KING IS IN DANGER WITH THE NEW POSITION
-    /* if (
-      allyKing.inDanger.some((sqr) => sqr.team === otherTeam(firstPiece?.team))
-    ) {
-      return { isValid: IsValidType.NO };
-    } */
-
-    //IF ENEMY KING IS IN CHECK, MAKE THAT MOVEMENT
-    if (enemyKing.inDanger.some((sqr) => sqr.team === firstPiece?.team)) {
-      return { isValid: IsValidType.YES, moveType: MoveType.CHECK };
-    }
-
-    //UPDATE CANMOVE PROPERTY TO CHECK FOR A STALEMATE
+    //UPDATE PINNED PROPERTY
     uptBoard = uptBoard.map((item) => {
       let newPiece: PieceType | null = null;
       if (item.piece) {
-        newPiece = { ...item.piece, canMove: canItMove(item, uptBoard) };
+        newPiece = { ...item.piece, pinDirec: canItMove(item, uptBoard) };
       }
       return { ...item, piece: newPiece };
     });
+    //console.log(uptBoard);
 
     const whitePieces = uptBoard.filter(
       (sqr) => sqr.piece?.team === Team.WHITE
@@ -122,12 +107,34 @@ export const isValidMove = (
     );
 
     //TABLAS
-    if (
-      !whitePieces.some((p) => p.piece?.canMove) ||
-      !blackPieces.some((p) => p.piece?.canMove)
+    /* if (
+      !whitePieces.some((p) => p.piece?.pinDirec) ||
+      !blackPieces.some((p) => p.piece?.pinDirec)
     ) {
-      return { isValid: IsValidType.YES, moveType: MoveType.STALEMATE };
+      return {
+        isValid: IsValidType.YES,
+        moveType: MoveType.STALEMATE,
+        uptBoard,
+      };
+    } */
+
+    let kings = uptBoard.filter((sq) => sq.piece?.type === PiecesType.KING);
+    let allyKing = kings.filter((sq) => sq.piece?.team === firstPiece?.team)[0];
+    let enemyKing = kings.filter(
+      (sq) => sq.piece?.team === otherTeam(firstPiece?.team)
+    )[0];
+
+    if (allyKing.inDanger.some((sqr) => sqr.team !== firstPiece?.team)) {
+      return { isValid: IsValidType.NO };
     }
+
+    //IF ENEMY KING IS IN CHECK, MAKE THAT MOVEMENT
+    if (enemyKing.inDanger.some((sqr) => sqr.team === firstPiece?.team)) {
+      preventMate(uptBoard, lastSquare, enemyKing);
+
+      return { isValid: IsValidType.YES, moveType: MoveType.CHECK, uptBoard };
+    }
+
     return { ...ans, uptBoard };
   }
   return ans;

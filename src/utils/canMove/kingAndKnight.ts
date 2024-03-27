@@ -1,4 +1,4 @@
-import { PiecesType, SquareType } from "../../types/models";
+import { Direcs, PiecesType, SquareType } from "../../types/models";
 import { convertToChessGrid } from "../coordCalculus";
 
 export function cmKing(square: SquareType, board: SquareType[]) {
@@ -32,7 +32,7 @@ export function cmKing(square: SquareType, board: SquareType[]) {
       !sqr.inDanger.some((item) => item.team !== square.piece?.team)
     ) {
       //console.log(newX, newY);
-      
+
       canMove = true;
     }
     if (canMove) {
@@ -40,7 +40,7 @@ export function cmKing(square: SquareType, board: SquareType[]) {
     }
   }
   //console.log(square.piece?.team, canMove);
-  
+
   return canMove;
 }
 export function cmKnight(square: SquareType, board: SquareType[]) {

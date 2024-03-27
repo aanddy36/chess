@@ -1,4 +1,4 @@
-import { PiecesType, SquareType, Team } from "../../types/models";
+import { Direcs, PiecesType, SquareType, Team } from "../../types/models";
 import { convertToChessGrid } from "../coordCalculus";
 
 export function cmPawn(square: SquareType, board: SquareType[]) {

@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import {
   ChangeProp,
+  Direcs,
   PieceType,
   PiecesType,
   SquareType,
@@ -50,7 +51,7 @@ export function movePiece(
           image: `/src/assets/${firstSquare.piece.team}${changeObj.pieceToPromote}.png`,
           id: nanoid(),
           firstMoveDone: changeObj.pieceToPromote === PiecesType.ROOK && true,
-          canMove: true,
+          pinDirec: null,
         };
       } else {
         newPiece = { ...(firstSquare.piece as PieceType) };
@@ -81,7 +82,7 @@ export function movePiece(
         image: `/src/assets/${firstSquare.piece?.team as Team}r.png`,
         id: nanoid(),
         firstMoveDone: true,
-        canMove: true,
+        pinDirec: null,
       };
       return { ...square, piece: newPiece };
     }

@@ -1,7 +1,7 @@
-import { Coord, PiecesType, SquareType } from "../../types/models";
+import { Coord, Direcs, PiecesType, SquareType } from "../../types/models";
 import { convertToChessGrid } from "../coordCalculus";
 
-export function cmBishop(square: SquareType, board: SquareType[]) {
+export function cmBishop(square: SquareType, board: SquareType[]): boolean {
   const { x, y } = square.gridPosition;
   let possiblePairs = [] as Coord[];
   switch (square.piece?.type) {
