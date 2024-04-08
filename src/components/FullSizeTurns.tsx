@@ -41,7 +41,7 @@ export const FullSizeTurns = () => {
       <div className={`h-full flex flex-col justify-between`}>
         <div className="flex flex-col gap-2 items-center">
           <img
-            src="/src/assets/black_user.png"
+            src="/black_user.png"
             className={`w-24 rounded-md border-2 ${
               turn === Team.BLACK && gameStarted
                 ? "border-[#f3f04b]"
@@ -66,7 +66,7 @@ export const FullSizeTurns = () => {
         <div className="flex flex-col gap-2 items-center">
           <h4 className=" text-white font-medium">White</h4>
           <img
-            src="/src/assets/white_user.png"
+            src="/white_user.png"
             className={`w-24 rounded-md border-2 ${
               turn === Team.WHITE && gameStarted
                 ? "border-[#f3f04b]"

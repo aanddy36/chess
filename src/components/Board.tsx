@@ -77,7 +77,7 @@ export function Board({
       <div className=" flex justify-between full:hidden">
         <div className=" flex items-start gap-3">
           <img
-            src="/src/assets/black_user.png"
+            src="/black_user.png"
             className={`w-10 border-2 ${
               turn === Team.BLACK && gameStarted
                 ? "border-[#f3f04b]"
@@ -122,7 +122,7 @@ export function Board({
       <div className=" flex justify-between full:hidden">
         <div className=" flex items-start gap-3">
           <img
-            src="/src/assets/white_user.png"
+            src="/white_user.png"
             className={`w-10 border-2 ${
               turn === Team.WHITE && gameStarted
                 ? "border-[#f3f04b]"

@@ -11,7 +11,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.ROOK,
       team: Team.BLACK,
-      image: `/src/assets/br.png`,
+      image: `/br.png`,
       id: nanoid(),
       firstMoveDone: false,
       pinDirec: null,
@@ -23,7 +23,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.KNIGHT,
       team: Team.BLACK,
-      image: `/src/assets/bn.png`,
+      image: `/bn.png`,
       id: nanoid(),
       pinDirec: null,
       canMove:true,
@@ -34,7 +34,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.BISHOP,
       team: Team.BLACK,
-      image: `/src/assets/bb.png`,
+      image: `/bb.png`,
       id: nanoid(),
       pinDirec: null,
       canMove:false,
@@ -45,7 +45,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.QUEEN,
       team: Team.BLACK,
-      image: `/src/assets/bq.png`,
+      image: `/bq.png`,
       id: nanoid(),
       pinDirec: null,
       canMove:false,
@@ -56,7 +56,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.KING,
       team: Team.BLACK,
-      image: `/src/assets/bk.png`,
+      image: `/bk.png`,
       id: nanoid(),
       firstMoveDone: false,
       pinDirec: null,
@@ -68,7 +68,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.BISHOP,
       team: Team.BLACK,
-      image: `/src/assets/bb.png`,
+      image: `/bb.png`,
       id: nanoid(),
       pinDirec: null,
       canMove:false,
@@ -79,7 +79,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.KNIGHT,
       team: Team.BLACK,
-      image: `/src/assets/bn.png`,
+      image: `/bn.png`,
       id: nanoid(),
       pinDirec: null,
       canMove:true,
@@ -90,7 +90,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.ROOK,
       team: Team.BLACK,
-      image: `/src/assets/br.png`,
+      image: `/br.png`,
       id: nanoid(),
       firstMoveDone: false,
       pinDirec: null,
@@ -102,7 +102,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.BLACK,
-      image: `/src/assets/bp.png`,
+      image: `/bp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -115,7 +115,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.BLACK,
-      image: `/src/assets/bp.png`,
+      image: `/bp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -128,7 +128,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.BLACK,
-      image: `/src/assets/bp.png`,
+      image: `/bp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -141,7 +141,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.BLACK,
-      image: `/src/assets/bp.png`,
+      image: `/bp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -154,7 +154,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.BLACK,
-      image: `/src/assets/bp.png`,
+      image: `/bp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -167,7 +167,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.BLACK,
-      image: `/src/assets/bp.png`,
+      image: `/bp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -180,7 +180,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.BLACK,
-      image: `/src/assets/bp.png`,
+      image: `/bp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -193,7 +193,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.BLACK,
-      image: `/src/assets/bp.png`,
+      image: `/bp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -206,7 +206,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.WHITE,
-      image: `/src/assets/wp.png`,
+      image: `/wp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -219,7 +219,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.WHITE,
-      image: `/src/assets/wp.png`,
+      image: `/wp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -232,7 +232,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.WHITE,
-      image: `/src/assets/wp.png`,
+      image: `/wp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -245,7 +245,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.WHITE,
-      image: `/src/assets/wp.png`,
+      image: `/wp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -258,7 +258,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.WHITE,
-      image: `/src/assets/wp.png`,
+      image: `/wp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -271,7 +271,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.WHITE,
-      image: `/src/assets/wp.png`,
+      image: `/wp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -284,7 +284,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.WHITE,
-      image: `/src/assets/wp.png`,
+      image: `/wp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -297,7 +297,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.PAWN,
       team: Team.WHITE,
-      image: `/src/assets/wp.png`,
+      image: `/wp.png`,
       id: nanoid(),
       firstMoveDone: false,
       enPassant: true,
@@ -310,7 +310,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.ROOK,
       team: Team.WHITE,
-      image: `/src/assets/wr.png`,
+      image: `/wr.png`,
       id: nanoid(),
       firstMoveDone: false,
       pinDirec: null,
@@ -322,7 +322,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.KNIGHT,
       team: Team.WHITE,
-      image: `/src/assets/wn.png`,
+      image: `/wn.png`,
       id: nanoid(),
       pinDirec: null,
       canMove:true,
@@ -333,7 +333,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.BISHOP,
       team: Team.WHITE,
-      image: `/src/assets/wb.png`,
+      image: `/wb.png`,
       id: nanoid(),
       pinDirec: null,
       canMove:false,
@@ -344,7 +344,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.QUEEN,
       team: Team.WHITE,
-      image: `/src/assets/wq.png`,
+      image: `/wq.png`,
       id: nanoid(),
       pinDirec: null,
       canMove:false,
@@ -355,7 +355,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.KING,
       team: Team.WHITE,
-      image: `/src/assets/wk.png`,
+      image: `/wk.png`,
       id: nanoid(),
       firstMoveDone: false,
       pinDirec: null,
@@ -367,7 +367,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.BISHOP,
       team: Team.WHITE,
-      image: `/src/assets/wb.png`,
+      image: `/wb.png`,
       id: nanoid(),
       pinDirec: null,
       canMove:false,
@@ -378,7 +378,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.KNIGHT,
       team: Team.WHITE,
-      image: `/src/assets/wn.png`,
+      image: `/wn.png`,
       id: nanoid(),
       pinDirec: null,
       canMove:true,
@@ -389,7 +389,7 @@ export const startingPieces: Props[] = [
     piece: {
       type: PiecesType.ROOK,
       team: Team.WHITE,
-      image: `/src/assets/wr.png`,
+      image: `/wr.png`,
       id: nanoid(),
       firstMoveDone: false,
       pinDirec: null,

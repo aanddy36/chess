@@ -32,7 +32,7 @@ export function WinningModal() {
         </button>
         <div className="flex items-center gap-3 py-4 justify-center">
           {winner?.team && (
-            <img src="/src/assets/trophy.png" className="w-12 h-12" />
+            <img src="/trophy.png" className="w-12 h-12" />
           )}
           <div className=" flex flex-col items-center">
             <h4 className=" font-semibold text-2xl tablet:text-3xl text-center">

@@ -66,7 +66,7 @@ export const PromotionMenu = () => {
           className="bg-cover cursor-pointer transition duration-200 hover:bg-gray-200 relative"
           htmlFor={PiecesType.QUEEN}
           style={{
-            backgroundImage: `url('/src/assets/${moveStatus.changeTeam}q.png')`,
+            backgroundImage: `url('/${moveStatus.changeTeam}q.png')`,
             height: `${GRID_SIZE}px`,
             width: `${GRID_SIZE}px`,
           }}
@@ -84,7 +84,7 @@ export const PromotionMenu = () => {
           className="bg-cover cursor-pointer transition duration-200 hover:bg-gray-200 relative"
           htmlFor={PiecesType.KNIGHT}
           style={{
-            backgroundImage: `url('/src/assets/${moveStatus.changeTeam}n.png')`,
+            backgroundImage: `url('/${moveStatus.changeTeam}n.png')`,
             height: `${GRID_SIZE}px`,
             width: `${GRID_SIZE}px`,
           }}
@@ -102,7 +102,7 @@ export const PromotionMenu = () => {
           className="bg-cover cursor-pointer transition duration-200 hover:bg-gray-200 relative"
           htmlFor={PiecesType.ROOK}
           style={{
-            backgroundImage: `url('/src/assets/${moveStatus.changeTeam}r.png')`,
+            backgroundImage: `url('/${moveStatus.changeTeam}r.png')`,
             height: `${GRID_SIZE}px`,
             width: `${GRID_SIZE}px`,
           }}
@@ -120,7 +120,7 @@ export const PromotionMenu = () => {
           className="bg-cover cursor-pointer transition duration-200 hover:bg-gray-200 relative"
           htmlFor={PiecesType.BISHOP}
           style={{
-            backgroundImage: `url('/src/assets/${moveStatus.changeTeam}b.png')`,
+            backgroundImage: `url('/${moveStatus.changeTeam}b.png')`,
             height: `${GRID_SIZE}px`,
             width: `${GRID_SIZE}px`,
           }}

@@ -47,7 +47,7 @@ export function movePiece(
         newPiece = {
           type: changeObj.pieceToPromote,
           team: firstSquare.piece.team,
-          image: `/src/assets/${firstSquare.piece.team}${changeObj.pieceToPromote}.png`,
+          image: `/${firstSquare.piece.team}${changeObj.pieceToPromote}.png`,
           id: nanoid(),
           firstMoveDone: changeObj.pieceToPromote === PiecesType.ROOK && true,
           pinDirec: null,
@@ -79,7 +79,7 @@ export function movePiece(
       let newPiece = {
         type: PiecesType.ROOK,
         team: firstSquare.piece?.team as Team,
-        image: `/src/assets/${firstSquare.piece?.team as Team}r.png`,
+        image: `/${firstSquare.piece?.team as Team}r.png`,
         id: nanoid(),
         firstMoveDone: true,
         pinDirec: null,
